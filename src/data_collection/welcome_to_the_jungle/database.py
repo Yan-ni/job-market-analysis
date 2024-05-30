@@ -1,27 +1,22 @@
-import sqlite3
-import os
+import psycopg2
 import time
-
-DATABASE_NAME='database'
-DATABASE_DIR=os.path.join(os.path.dirname(__file__), '..', 'dist')
-os.makedirs(DATABASE_DIR, exist_ok=True)
-DATABASE_PATH=os.path.join(DATABASE_DIR, f'{DATABASE_NAME}.sqlite')
 
 class ScrapeDB:
   """A representation of the database that holds the scraping data."""
-  
+
   def __init__(self):
-    self.con = sqlite3.connect(DATABASE_PATH)
+    self.con = psycopg2.connect(user="postgres", password="password", host="localhost")
+
     self.cur = self.con.cursor()
 
     self.cur.execute("""CREATE TABLE IF NOT EXISTS scrapes(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id SERIAL PRIMARY KEY,
       started_at INTEGER,
       ended_at INTEGER
     )""")
 
     self.cur.execute("""CREATE TABLE IF NOT EXISTS job_offers(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id SERIAL PRIMARY KEY,
       job_url TEXT,
       job_title TEXT,
       company_name TEXT,
@@ -34,7 +29,7 @@ class ScrapeDB:
       )""")
 
     timestamp = int(time.time())
-    self.cur.execute('INSERT INTO scrapes(started_at) VALUES(?)', [timestamp])
+    self.cur.execute('INSERT INTO scrapes(started_at) VALUES(%s)', [timestamp])
     self.con.commit()
     self.scrape_id = self.cur.lastrowid
 
@@ -50,7 +45,7 @@ class ScrapeDB:
       job_description,
       preferred_experience,
       recruitement_process,
-      scrape_id) VALUES (?,?,?,?,?,?,?,?)""", job_data)
+      scrape_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)""", job_data)
     self.con.commit()
     
     if len(job_data) >= 2:
@@ -59,7 +54,7 @@ class ScrapeDB:
   def close(self) -> None:
     """Updates the scrape end time in the data and closes the cursor and the database."""
     timestamp = int(time.time())
-    self.cur.execute('UPDATE scrapes SET ended_at=? WHERE id=?', [timestamp, self.scrape_id])
+    self.cur.execute('UPDATE scrapes SET ended_at=%s WHERE id=%s', [timestamp, self.scrape_id])
     self.con.commit()
     self.cur.close()
     self.con.close()
