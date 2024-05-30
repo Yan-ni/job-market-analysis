@@ -1,4 +1,4 @@
-from scraper import Scraper
+from .scraper import Scraper
 
 class JobOffer:
   """A representation of a welcome-to-the-jungle job offer.
@@ -10,9 +10,9 @@ class JobOffer:
   def __init__(self, url: str):
     self.url = url
 
-  def get_data(self, scraper) -> dict:
+  def get_data(self) -> dict:
     """Returns the data of the job offer."""
-    soup = scraper.get_url_soup(self.url)
+    soup = Scraper.get_url_soup(self.url)
 
     job_data = dict()
 

@@ -8,17 +8,16 @@ SLEEP_TIME=1
 
 class Scraper:
   """A representation of the scraper that is a combination of selenium and beautiful soup."""
-  
-  def __init__(self):
-    chrome_options = Options()
-    chrome_options.add_argument("--headless=new")
-    self.browser = Chrome(options=chrome_options) # Path to chromium argument is optional, if not specified will search path.
+  chrome_options = Options()
+  chrome_options.add_argument("--headless=new")
+  browser = Chrome(options=chrome_options) # Path to chromium argument is optional, if not specified will search path.
 
-  def get_url_soup(self, url: str) -> BeautifulSoup:
+  @classmethod
+  def get_url_soup(cls, url: str) -> BeautifulSoup:
     """Fetch the url and return its page source soup."""
-    self.browser.get(url)
+    cls.browser.get(url)
     time.sleep(SLEEP_TIME)
-    return BeautifulSoup(self.browser.page_source, 'html.parser')
+    return BeautifulSoup(cls.browser.page_source, 'html.parser')
 
   @staticmethod
   def get_soup_text(soup: BeautifulSoup) -> str:

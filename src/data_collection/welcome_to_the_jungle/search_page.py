@@ -1,3 +1,4 @@
+from .scraper import Scraper
 import urllib
 
 class SearchPage:
@@ -22,9 +23,9 @@ class SearchPage:
     """Returns the constructed url of the search page."""
     return f"https://www.welcometothejungle.com/en/jobs?refinementList%5Boffices.country_code%5D%5B%5D={self.country_code}&refinementList%5Boffices.state%5D%5B%5D=Ile-de-France&refinementList%5Bcontract_type%5D%5B%5D={self.contract_type}&query={self.query}&page={self.page}&aroundQuery={self.location}"
   
-  def get_jobs_urls(self, scraper) -> set[str]:
+  def get_jobs_urls(self) -> set[str]:
     """Return the list of job urls present in the current search page."""
-    soup = scraper.get_url_soup(self.get_url())
+    soup = Scraper.get_url_soup(self.get_url())
     elements = soup.select('li > div > a')
     jobs_urls = set()
 
