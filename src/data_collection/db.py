@@ -59,11 +59,8 @@ class ScrapeDB:
       scrape_id) VALUES (?,?,?,?,?,?,?,?)""", job_data)
     self.con.commit()
     
-    try:
-      print('SAVING : {:<80} @ {:<50}'.format(job_data[1], job_data[2]))
-    except:
-      print('EXCEPTION RAIED')
-      print(f'job_data: {job_data}')
+    if len(job_data) >= 2:
+      print('[SAVING] {:<80} @ {:<50}'.format(job_data[1], job_data[2]))
 
   def close(self) -> None:
     """ updates the scrape end time in the data and closes the cursor and the database."""
