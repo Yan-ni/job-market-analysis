@@ -3,9 +3,9 @@ import os
 import time
 
 DATABASE_NAME='database'
-DATABASE_DIR=os.path.join('..', '..', 'dist')
+DATABASE_DIR=os.path.join(os.path.dirname(__file__), '..', 'dist')
 os.makedirs(DATABASE_DIR, exist_ok=True)
-DATABASE_PATH=os.path.join(os.path.dirname(__file__), DATABASE_DIR, f'{DATABASE_NAME}.sqlite')
+DATABASE_PATH=os.path.join(DATABASE_DIR, f'{DATABASE_NAME}.sqlite')
 
 class ScrapeDB:
   """A representation of the database that holds the scraping data."""

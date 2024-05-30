@@ -1,7 +1,5 @@
 # Imports
-from db import ScrapeDB
-from welcome_to_the_jungle import SearchPage, JobOffer
-from scraper import Scraper
+from welcome_to_the_jungle import SearchPage, JobOffer, Scraper, ScrapeDB
 
 # Init
 scraper = Scraper()
