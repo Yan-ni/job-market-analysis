@@ -2,7 +2,7 @@ from scraper import Scraper
 import urllib
 
 class SearchPage:
-  """ A class representing a (welcome to the jugnle) search page.
+  """A representation of (welcome to the jungle) search page.
   
   Attributes:
   - country_code (str): The country code of the search.
@@ -11,6 +11,7 @@ class SearchPage:
   - location (str): The location where we would like to search in.
   - page (int): The number of the page of the search result.
   """
+
   def __init__(self, page=1, country_code="FR", contract_type="FULL_TIME", query="data analyst", location="Ile-de-France, France"):
     self.country_code = urllib.parse.quote(country_code)
     self.contract_type = urllib.parse.quote(contract_type)
@@ -19,11 +20,11 @@ class SearchPage:
     self.page = page
 
   def get_url(self) -> str:
-    """ Returns the constructed url of the search page."""
+    """Returns the constructed url of the search page."""
     return f"https://www.welcometothejungle.com/en/jobs?refinementList%5Boffices.country_code%5D%5B%5D={self.country_code}&refinementList%5Boffices.state%5D%5B%5D=Ile-de-France&refinementList%5Bcontract_type%5D%5B%5D={self.contract_type}&query={self.query}&page={self.page}&aroundQuery={self.location}"
   
   def get_jobs_urls(self, scraper) -> set[str]:
-    """ Return the list of job urls present in the current search page."""
+    """Return the list of job urls present in the current search page."""
     soup = scraper.get_url_soup(self.get_url())
     elements = soup.select('li > div > a')
     jobs_urls = set()
@@ -35,20 +36,21 @@ class SearchPage:
     return jobs_urls
 
   def next(self) -> None:
-    """ Sets the search page to the next search page."""
+    """Sets the search page to the next search page."""
     self.page += 1
 
 class JobOffer:
-  """ A class representing a job offer.
+  """A representation of a welcome-to-the-jungle job offer.
   
   Attributes:
   - ulr (str): The url to the job offer.
   """
+
   def __init__(self, url: str):
     self.url = url
 
   def get_data(self, scraper) -> dict:
-    """ Returns the data of the job offer."""
+    """Returns the data of the job offer."""
     soup = scraper.get_url_soup(self.url)
 
     job_data = dict()

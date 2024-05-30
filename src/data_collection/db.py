@@ -8,14 +8,9 @@ os.makedirs(DATABASE_DIR, exist_ok=True)
 DATABASE_PATH=os.path.join(os.path.dirname(__file__), DATABASE_DIR, f'{DATABASE_NAME}.sqlite')
 
 class ScrapeDB:
+  """A representation of the database that holds the scraping data."""
+  
   def __init__(self):
-    """ A class representing the database that holds the scraping data.
-
-    Attributes:
-    - con: The connection to the database.
-    - cur: The cursor in the database.
-    - scrape_id (int): The id of the current scrape.
-    """
     self.con = sqlite3.connect(DATABASE_PATH)
     self.cur = self.con.cursor()
 
@@ -43,9 +38,8 @@ class ScrapeDB:
     self.con.commit()
     self.scrape_id = self.cur.lastrowid
 
-
   def save_job_offer_data(self, job_offer_data: dict) -> None:
-    """ Saves the job data in the database."""
+    """Saves the job data in the database."""
     job_data = list(job_offer_data.values())
     job_data.append(self.scrape_id)
     self.cur.execute("""INSERT INTO job_offers(
@@ -63,7 +57,7 @@ class ScrapeDB:
       print('[SAVING] {:<80} @ {:<50}'.format(job_data[1], job_data[2]))
 
   def close(self) -> None:
-    """ updates the scrape end time in the data and closes the cursor and the database."""
+    """Updates the scrape end time in the data and closes the cursor and the database."""
     timestamp = int(time.time())
     self.cur.execute('UPDATE scrapes SET ended_at=? WHERE id=?', [timestamp, self.scrape_id])
     self.con.commit()

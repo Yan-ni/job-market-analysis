@@ -7,25 +7,22 @@ import re
 SLEEP_TIME=1
 
 class Scraper:
-  """ A class representing the scraper that is a combination of selenium and beautiful soup.
+  """A representation of the scraper that is a combination of selenium and beautiful soup."""
   
-  Attributes:
-  - browser (Chrome): The browser used by selenium to load the web pages.
-  """
   def __init__(self):
     chrome_options = Options()
     chrome_options.add_argument("--headless=new")
     self.browser = Chrome(options=chrome_options) # Path to chromium argument is optional, if not specified will search path.
 
   def get_url_soup(self, url: str) -> BeautifulSoup:
-    """ Fetch the url and return its page source soup."""
+    """Fetch the url and return its page source soup."""
     self.browser.get(url)
     time.sleep(SLEEP_TIME)
     return BeautifulSoup(self.browser.page_source, 'lxml')
 
   @staticmethod
   def get_soup_text(soup: BeautifulSoup) -> str:
-    """ Get text from a multi line text.
+    """Get text from a multi line text.
     This method prevents having randomly broken words or inconsistent returns.
     """
     text_list = list()
