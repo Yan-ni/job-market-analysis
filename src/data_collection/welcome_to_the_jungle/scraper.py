@@ -18,7 +18,7 @@ class Scraper:
     """Fetch the url and return its page source soup."""
     self.browser.get(url)
     time.sleep(SLEEP_TIME)
-    return BeautifulSoup(self.browser.page_source, 'lxml')
+    return BeautifulSoup(self.browser.page_source, 'html.parser')
 
   @staticmethod
   def get_soup_text(soup: BeautifulSoup) -> str:
