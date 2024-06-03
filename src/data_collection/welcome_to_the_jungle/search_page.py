@@ -18,13 +18,12 @@ class SearchPage:
     self.query = urllib.parse.quote(query)
     self.location = urllib.parse.quote(location)
     self.page_number = page_number
-    self.url = f'https://www.welcometothejungle.com/en/jobs?refinementList%5Boffices.country_code%5D%5B%5D={self.country_code}&refinementList%5Boffices.state%5D%5B%5D=Ile-de-France&refinementList%5Bcontract_type%5D%5B%5D={self.contract_type}&query={self.query}&page={self.page_number}&aroundQuery={self.location}'
 
   def get_country_code(self):
     return self.country_code
 
   def get_contract_type(self):
-    return self.get_contract_type
+    return self.contract_type
 
   def get_query(self):
     return self.query
@@ -36,7 +35,7 @@ class SearchPage:
     return self.page_number
 
   def get_url(self) -> str:
-    return self.url
+    return f'https://www.welcometothejungle.com/en/jobs?refinementList%5Boffices.country_code%5D%5B%5D={self.get_country_code()}&refinementList%5Boffices.state%5D%5B%5D=Ile-de-France&refinementList%5Bcontract_type%5D%5B%5D={self.get_contract_type()}&query={self.get_query()}&page={self.get_page_number()}&aroundQuery={self.get_location()}'
   
   def get_jobs_offers_urls(self) -> set[str]:
     """Return a set of job urls present in the current search page."""
