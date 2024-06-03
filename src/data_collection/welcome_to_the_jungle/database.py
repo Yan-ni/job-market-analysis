@@ -12,7 +12,7 @@ class ScrapeDB:
     )
 
   cur.execute("""CREATE TABLE IF NOT EXISTS job_offers(
-      id SERIAL PRIMARY KEY,
+      id TEXT PRIMARY KEY,
       company_id TEXT,
       title TEXT,
       url TEXT,
@@ -23,10 +23,10 @@ class ScrapeDB:
       FOREIGN KEY (scrape_id) REFERENCES scrapes(id))"""
     )
 
-  cur.execute('INSERT INTO scrapes(started_at) VALUES(%s)', [int(time.time())])
+  cur.execute('INSERT INTO scrapes(started_at) VALUES(%s) RETURNING id', [int(time.time())])
+  scrape_id = cur.fetchone()[0]
+  
   con.commit()
-
-  scrape_id = cur.lastrowid
   print('[INFO] database ready!')
 
   @classmethod
