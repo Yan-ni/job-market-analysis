@@ -13,7 +13,7 @@ class JobOffer:
     self.url: str = url
     self.__soup: BeautifulSoup = Scraper.get_url_soup(self.url)
 
-    regex_search_result = re.search('https://www.welcometothejungle.com/en/companies/(?P<company_id>.*)/jobs/(?P<job_id>.*)\??.*', self.url)
+    regex_search_result = re.search('companies\/(?P<company_id>[^\/]+)\/jobs\/(?P<job_id>[^\/?]+)', self.url)
     self.id: str = regex_search_result.group('job_id')
     self.company_id: str = regex_search_result.group('company_id')
     self.title: str = self.__scrape_title()
