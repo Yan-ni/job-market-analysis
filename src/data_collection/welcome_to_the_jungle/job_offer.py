@@ -96,5 +96,4 @@ class JobOffer:
       %(scrape_id)s)""", row_data)
     ScrapeDB.con.commit()
     
-    if len(job_data) >= 2:
-      print('[SAVING] {:<80} @ {:<50}'.format(job_data[1], job_data[2]))
+    print('[SAVING] {:<80} @ {:<50}'.format(row_data.get('id'), row_data.get('company_id')))
