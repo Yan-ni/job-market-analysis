@@ -1,5 +1,5 @@
 from .scraper import Scraper
-import urllib
+from .database import ScrapeDB
 
 class SearchPage:
   """A representation of (welcome to the jungle) search page.
@@ -13,11 +13,25 @@ class SearchPage:
   """
 
   def __init__(self, *, page_number=1, country_code="FR", contract_type="FULL_TIME", query="data analyst", location="Ile-de-France, France"):
-    self.country_code = urllib.parse.quote(country_code)
-    self.contract_type = urllib.parse.quote(contract_type)
-    self.query = urllib.parse.quote(query)
-    self.location = urllib.parse.quote(location)
+    self.country_code = country_code
+    self.contract_type = contract_type
+    self.query = query
+    self.location = location
     self.page_number = page_number
+
+    ScrapeDB.cur.execute("""UPDATE scrapes SET
+      query = %(query)s,
+      contract_type = %(contract_type)s,
+      location = %(location)s,
+      country_code = %(country_code)s
+      WHERE id=%(scrape_id)s""", {
+        'query': self.get_query(),
+        'contract_type': self.get_contract_type(),
+        'location': self.get_location(),
+        'country_code': self.get_country_code(),
+        'scrape_id': ScrapeDB.scrape_id
+      })
+    ScrapeDB.con.commit()
 
   def get_country_code(self):
     return self.country_code
@@ -35,7 +49,7 @@ class SearchPage:
     return self.page_number
 
   def get_url(self) -> str:
-    return f'https://www.welcometothejungle.com/en/jobs?refinementList%5Boffices.country_code%5D%5B%5D={self.get_country_code()}&refinementList%5Boffices.state%5D%5B%5D=Ile-de-France&refinementList%5Bcontract_type%5D%5B%5D={self.get_contract_type()}&query={self.get_query()}&page={self.get_page_number()}&aroundQuery={self.get_location()}'
+    return f'https://www.welcometothejungle.com/en/jobs?refinementList[offices.country_code][]={self.get_country_code()}&refinementList[offices.state][]=Ile-de-France&refinementList[contract_type][]={self.get_contract_type()}&query={self.get_query()}&page={self.get_page_number()}&aroundQuery={self.get_location()}'
   
   def get_jobs_offers_urls(self) -> set[str]:
     """Return a set of job urls present in the current search page."""

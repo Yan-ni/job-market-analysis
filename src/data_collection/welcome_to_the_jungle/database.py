@@ -7,6 +7,10 @@ class ScrapeDB:
   cur = con.cursor()
   cur.execute("""CREATE TABLE IF NOT EXISTS scrapes(
       id SERIAL PRIMARY KEY,
+      query TEXT,
+      contract_type TEXT,
+      location TEXT,
+      country_code TEXT,
       started_at INTEGER,
       ended_at INTEGER)"""
     )
