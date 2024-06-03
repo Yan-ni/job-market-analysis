@@ -1,4 +1,5 @@
 from .scraper import Scraper
+from .database import ScrapeDB
 import re
 
 class JobOffer:
@@ -73,4 +74,27 @@ class JobOffer:
     }
 
   def save_to_db(self):
-    pass
+    """Saves the job data in the database."""
+    row_data: dict = self.to_dict()
+    row_data['scrape_id'] = ScrapeDB.scrape_id
+    ScrapeDB.cur.execute("""INSERT INTO job_offers(
+      id,
+      company_id,
+      title,
+      url,
+      description,
+      preferred_experience,
+      recruitment_process,
+      scrape_id) VALUES (
+      %(id)s,
+      %(company_id)s,
+      %(title)s,
+      %(url)s,
+      %(description)s,
+      %(preferred_experience)s,
+      %(recruitment_process)s,
+      %(scrape_id)s)""", row_data)
+    ScrapeDB.con.commit()
+    
+    if len(job_data) >= 2:
+      print('[SAVING] {:<80} @ {:<50}'.format(job_data[1], job_data[2]))
