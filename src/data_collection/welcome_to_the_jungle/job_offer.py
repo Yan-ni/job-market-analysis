@@ -172,7 +172,8 @@ class JobOffer:
       starting_date,
       remote,
       experience,
-      education) VALUES (
+      education,
+      date) VALUES (
       %(id)s,
       %(company_id)s,
       %(title)s,
@@ -187,7 +188,8 @@ class JobOffer:
       %(starting_date)s,
       %(remote)s,
       %(experience)s,
-      %(education)s)""", row_data)
+      %(education)s,
+      %(date)s)""", row_data)
     ScrapeDB.con.commit()
     
     print('[SAVING] {:<80} @ {:<50}'.format(row_data.get('id'), row_data.get('company_id')))
