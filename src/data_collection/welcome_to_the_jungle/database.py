@@ -23,6 +23,13 @@ class ScrapeDB:
       description TEXT,
       preferred_experience TEXT,
       recruitment_process TEXT,
+      contract TEXT,
+      location TEXT,
+      salary TEXT,
+      starting_date TEXT,
+      remote TEXT,
+      experience TEXT,
+      education TEXT,
       scrape_id INTEGER,
       FOREIGN KEY (scrape_id) REFERENCES scrapes(id))"""
     )
