@@ -28,32 +28,62 @@ class JobOffer:
     self.experience: str = self.__scrape_experience()
     self.education: str = self.__scrape_education()
 
-  def get_url(self) -> str:
-    return self.url
-
   def get_id(self) -> str:
     return self.id
-
-  def get_title(self) -> str:
-    return self.title
 
   def get_company_id(self) -> str:
     return self.company_id
 
+  def get_url(self) -> str:
+    return self.url
+
+  def get_title(self) -> str:
+    return self.title
+
+  def __scrape_title(self) -> str:
+    title_tag = self.__soup.select_one('h2')
+
+    return title_tag.get_text(' ') if title_tag is not None else None
+
   def get_description(self) -> str:
     return self.description
+
+  def __scrape_description(self) -> str:
+    description_tag = self.__soup.select_one('div[data-testid="job-section-description"] > div')
+
+    return Scraper.get_soup_text(description_tag) if description_tag is not None else None
 
   def get_preferred_experience(self) -> str:
     return self.preferred_experience
 
+  def __scrape_preferred_experience(self) -> str:
+    preferred_experience_tag = self.__soup.select_one('div[data-testid="job-section-experience"] > div')
+
+    return Scraper.get_soup_text(preferred_experience_tag) if preferred_experience_tag is not None else None
+
   def get_recruitment_process(self) -> str:
     return self.recruitment_process
+
+  def __scrape_recruitment_process(self) -> str:
+    recruitment_process_tag = self.__soup.select_one('div[data-testid="job-section-process"] > div')
+
+    return Scraper.get_soup_text(recruitment_process_tag) if recruitment_process_tag is not None else None
 
   def get_contract(self) -> str:
     return self.contract
 
+  def __scrape_contract(self) -> str:
+    contract_icon_tag = self.__soup.select_one('i[name="contract"]')
+
+    return contract_icon_tag.parent.get_text(' ') if contract_icon_tag is not None else None
+
   def get_location(self) -> str:
     return self.location
+
+  def __scrape_location(self) -> str:
+    location_icon_tag = self.__soup.select_one('i[name="location"]')
+
+    return location_icon_tag.parent.get_text(' ') if location_icon_tag is not None else None
 
   def get_salary(self) -> str:
     if self.salary is None:
@@ -61,14 +91,29 @@ class JobOffer:
 
     return self.salary.split(': ')[1] if ': ' in self.salary else self.salary
 
+  def __scrape_salary(self) -> str:
+    salary_icon_tag = self.__soup.select_one('i[name="salary"]')
+
+    return salary_icon_tag.parent.get_text(' ') if salary_icon_tag is not None else None
+
   def get_starting_date(self) -> str:
     if self.starting_date is None:
       return None
 
     return self.starting_date.split(': ')[1] if ': ' in self.starting_date else self.starting_date
 
+  def __scrape_starting_date(self) -> str:
+    starting_date_icon_tag = self.__soup.select_one('i[name="clock"]')
+
+    return starting_date_icon_tag.parent.get_text(' ') if starting_date_icon_tag is not None else None
+
   def get_remote(self) -> str:
     return self.remote
+
+  def __scrape_remote(self) -> str:
+    remote_icon_tag = self.__soup.select_one('i[name="remote"]')
+
+    return remote_icon_tag.parent.get_text(' ') if remote_icon_tag is not None else None
 
   def get_experience(self) -> str:
     if self.experience is None:
@@ -76,61 +121,16 @@ class JobOffer:
 
     return self.experience.split(': ')[1] if ': ' in self.experience else self.experience
 
+  def __scrape_experience(self) -> str:
+    experience_icon_tag = self.__soup.select_one('i[name="suitcase"]')
+
+    return experience_icon_tag.parent.get_text(' ') if experience_icon_tag is not None else None
+
   def get_education(self) -> str:
     if self.education is None:
       return None
 
     return self.education.split(': ')[1] if ': ' in self.education else self.education
-
-  def __scrape_title(self) -> str:
-    title_tag = self.__soup.select_one('h2')
-
-    return title_tag.get_text(' ') if title_tag is not None else None
-
-  def __scrape_description(self) -> str:
-    description_tag = self.__soup.select_one('div[data-testid="job-section-description"] > div')
-
-    return Scraper.get_soup_text(description_tag) if description_tag is not None else None
-
-  def __scrape_preferred_experience(self) -> str:
-    preferred_experience_tag = self.__soup.select_one('div[data-testid="job-section-experience"] > div')
-
-    return Scraper.get_soup_text(preferred_experience_tag) if preferred_experience_tag is not None else None
-
-  def __scrape_recruitment_process(self) -> str:
-    recruitment_process_tag = self.__soup.select_one('div[data-testid="job-section-process"] > div')
-
-    return Scraper.get_soup_text(recruitment_process_tag) if recruitment_process_tag is not None else None
-
-  def __scrape_contract(self) -> str:
-    contract_icon_tag = self.__soup.select_one('i[name="contract"]')
-
-    return contract_icon_tag.parent.get_text(' ') if contract_icon_tag is not None else None
-
-  def __scrape_location(self) -> str:
-    location_icon_tag = self.__soup.select_one('i[name="location"]')
-
-    return location_icon_tag.parent.get_text(' ') if location_icon_tag is not None else None
-
-  def __scrape_salary(self) -> str:
-    salary_icon_tag = self.__soup.select_one('i[name="salary"]')
-
-    return salary_icon_tag.parent.get_text(' ') if salary_icon_tag is not None else None
-
-  def __scrape_starting_date(self) -> str:
-    starting_date_icon_tag = self.__soup.select_one('i[name="clock"]')
-
-    return starting_date_icon_tag.parent.get_text(' ') if starting_date_icon_tag is not None else None
-
-  def __scrape_remote(self) -> str:
-    remote_icon_tag = self.__soup.select_one('i[name="remote"]')
-
-    return remote_icon_tag.parent.get_text(' ') if remote_icon_tag is not None else None
-
-  def __scrape_experience(self) -> str:
-    experience_icon_tag = self.__soup.select_one('i[name="suitcase"]')
-
-    return experience_icon_tag.parent.get_text(' ') if experience_icon_tag is not None else None
 
   def __scrape_education(self) -> str:
     education_icon_tag = self.__soup.select_one('i[name="education_level"]')
