@@ -189,7 +189,7 @@ class JobOffer:
       %(remote)s,
       %(experience)s,
       %(education)s,
-      %(date)s)""", row_data)
+      %(date)s) ON CONFLICT DO NOTHING""", row_data)
     ScrapeDB.con.commit()
     
     print('[SAVING] {:<80} @ {:<50}'.format(row_data.get('id'), row_data.get('company_id')))
