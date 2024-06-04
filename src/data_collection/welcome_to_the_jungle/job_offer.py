@@ -56,19 +56,31 @@ class JobOffer:
     return self.location
 
   def get_salary(self) -> str:
-    return self.salary
+    if self.salary is None:
+      return None
+
+    return self.salary.split(': ')[1] if ': ' in self.salary else self.salary
 
   def get_starting_date(self) -> str:
-    return self.starting_date
+    if self.starting_date is None:
+      return None
+
+    return self.starting_date.split(': ')[1] if ': ' in self.starting_date else self.starting_date
 
   def get_remote(self) -> str:
     return self.remote
 
   def get_experience(self) -> str:
-    return self.experience
+    if self.experience is None:
+      return None
+
+    return self.experience.split(': ')[1] if ': ' in self.experience else self.experience
 
   def get_education(self) -> str:
-    return self.education
+    if self.education is None:
+      return None
+
+    return self.education.split(': ')[1] if ': ' in self.education else self.education
 
   def __scrape_title(self) -> str:
     title_tag = self.__soup.select_one('h2')
@@ -103,22 +115,12 @@ class JobOffer:
   def __scrape_salary(self) -> str:
     salary_icon_tag = self.__soup.select_one('i[name="salary"]')
 
-    if salary_icon_tag is None:
-      return None
-
-    salary_text_splitted = salary_icon_tag.parent.get_text(' ').split(': ')
-
-    return salary_text_splitted[1].strip() if len(salary_text_splitted) else salary_text_splitted[0]
+    return salary_icon_tag.parent.get_text(' ') if salary_icon_tag is not None else None
 
   def __scrape_starting_date(self) -> str:
     starting_date_icon_tag = self.__soup.select_one('i[name="clock"]')
 
-    if starting_date_icon_tag is None:
-      return None
-
-    starting_date_text_splitted = starting_date_icon_tag.parent.get_text(' ').split(': ')
-
-    return starting_date_text_splitted[1].strip() if len(starting_date_text_splitted) else starting_date_text_splitted[0]
+    return starting_date_icon_tag.parent.get_text(' ') if starting_date_icon_tag is not None else None
 
   def __scrape_remote(self) -> str:
     remote_icon_tag = self.__soup.select_one('i[name="remote"]')
@@ -128,22 +130,12 @@ class JobOffer:
   def __scrape_experience(self) -> str:
     experience_icon_tag = self.__soup.select_one('i[name="suitcase"]')
 
-    if experience_icon_tag is None:
-      return None
-
-    experience_text_splitted = experience_icon_tag.parent.get_text(' ').split(': ')
-
-    return experience_text_splitted[1].strip() if len(experience_text_splitted) else experience_text_splitted[0]
+    return experience_icon_tag.parent.get_text(' ') if experience_icon_tag is not None else None
 
   def __scrape_education(self) -> str:
     education_icon_tag = self.__soup.select_one('i[name="education_level"]')
 
-    if education_icon_tag is None:
-      return None
-
-    education_text_splitted = education_icon_tag.parent.get_text(' ').split(': ')
-
-    return education_text_splitted[1].strip() if len(education_text_splitted) else education_text_splitted[0]
+    return education_icon_tag.parent.get_text(' ') if education_icon_tag is not None else None
 
   def to_dict(self):
     return {
