@@ -87,10 +87,7 @@ class JobOffer:
     return location_icon_tag.parent.get_text(' ') if location_icon_tag is not None else None
 
   def get_salary(self) -> str:
-    if self.salary is None:
-      return None
-
-    return self.salary.split(': ')[1] if ': ' in self.salary else self.salary
+    return self.salary
 
   def __scrape_salary(self) -> str:
     salary_icon_tag = self.__soup.select_one('i[name="salary"]')
@@ -98,10 +95,7 @@ class JobOffer:
     return salary_icon_tag.parent.get_text(' ') if salary_icon_tag is not None else None
 
   def get_starting_date(self) -> str:
-    if self.starting_date is None:
-      return None
-
-    return self.starting_date.split(': ')[1] if ': ' in self.starting_date else self.starting_date
+    return self.starting_date
 
   def __scrape_starting_date(self) -> str:
     starting_date_icon_tag = self.__soup.select_one('i[name="clock"]')
@@ -117,10 +111,7 @@ class JobOffer:
     return remote_icon_tag.parent.get_text(' ') if remote_icon_tag is not None else None
 
   def get_experience(self) -> str:
-    if self.experience is None:
-      return None
-
-    return self.experience.split(': ')[1] if ': ' in self.experience else self.experience
+    return self.experience
 
   def __scrape_experience(self) -> str:
     experience_icon_tag = self.__soup.select_one('i[name="suitcase"]')
@@ -128,10 +119,7 @@ class JobOffer:
     return experience_icon_tag.parent.get_text(' ') if experience_icon_tag is not None else None
 
   def get_education(self) -> str:
-    if self.education is None:
-      return None
-
-    return self.education.split(': ')[1] if ': ' in self.education else self.education
+    return self.education
 
   def __scrape_education(self) -> str:
     education_icon_tag = self.__soup.select_one('i[name="education_level"]')
