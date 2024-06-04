@@ -27,6 +27,7 @@ class JobOffer:
     self.remote: str = self.__scrape_remote()
     self.experience: str = self.__scrape_experience()
     self.education: str = self.__scrape_education()
+    self.date: str = self.__scrape_date()
 
   def get_id(self) -> str:
     return self.id
@@ -137,6 +138,14 @@ class JobOffer:
 
     return education_icon_tag.parent.get_text(' ') if education_icon_tag is not None else None
 
+  def get_date(self) -> str:
+    return self.date
+
+  def __scrape_date(self) -> str:
+    date_icon_tag = self.__soup.select_one('i[name="date"]')
+
+    return date_icon_tag.parent.get_text(' ') if date_icon_tag is not None else None
+
   def to_dict(self):
     return {
       'id': self.get_id(),
@@ -152,7 +161,8 @@ class JobOffer:
       'starting_date': self.get_starting_date(),
       'remote': self.get_remote(),
       'experience': self.get_experience(),
-      'education': self.get_education()
+      'education': self.get_education(),
+      'date': self.get_date()
     }
 
   def save_to_db(self):

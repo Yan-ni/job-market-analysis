@@ -30,6 +30,7 @@ class ScrapeDB:
       remote TEXT,
       experience TEXT,
       education TEXT,
+      date TEXT,
       scrape_id INTEGER,
       FOREIGN KEY (scrape_id) REFERENCES scrapes(id))"""
     )
