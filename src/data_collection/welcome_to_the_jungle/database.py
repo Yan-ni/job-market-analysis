@@ -15,6 +15,23 @@ class ScrapeDB:
       ended_at INTEGER)"""
     )
 
+  cur.execute("""CREATE TABLE IF NOT EXISTS companies(
+      id TEXT PRIMARY KEY,
+      name TEXT,
+      sector TEXT,
+      office_location TEXT,
+      website_url TEXT,
+      presentation TEXT,
+      looking_for TEXT,
+      good_to_know TEXT,
+      creation_year TEXT,
+      number_employees TEXT,
+      parity_percent_women TEXT,
+      parity_percent_men TEXT,
+      average_age TEXT,
+      url TEXT)"""
+    )
+
   cur.execute("""CREATE TABLE IF NOT EXISTS job_offers(
       id TEXT,
       company_id TEXT,
