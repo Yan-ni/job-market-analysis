@@ -1,5 +1,6 @@
 from .scraper import Scraper
 from .database import ScrapeDB
+from typing import Self
 
 class SearchPage:
   """A representation of (welcome to the jungle) search page.
@@ -63,6 +64,6 @@ class SearchPage:
 
     return jobs_urls
 
-  def next_page(self) -> None:
-    """Sets the search page to the next search page."""
-    self.page_number += 1
+  def next_page(self) -> Self:
+    """Return next search page"""
+    return SearchPage(page_number=(self.page_number + 1))

@@ -20,7 +20,7 @@ while True:
   if len(page_job_offers_urls) < 30:
     break
 
-  search_page.next_page()
+  search_page = search_page.next_page()
 
 print('[PROCESS] retrieving job offers data.')
 
