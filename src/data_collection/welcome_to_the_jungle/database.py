@@ -1,10 +1,11 @@
 import psycopg2
+import psycopg2.extras
 import time
 
 class ScrapeDB:
   """A representation of the database that holds the scraping data."""
   con = psycopg2.connect(user="postgres", password="password", host="localhost")
-  cur = con.cursor()
+  cur = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
   cur.execute("""CREATE TABLE IF NOT EXISTS scrapes(
       id SERIAL PRIMARY KEY,
       query TEXT,
