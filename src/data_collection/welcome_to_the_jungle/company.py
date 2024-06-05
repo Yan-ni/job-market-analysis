@@ -4,8 +4,40 @@ from .database import ScrapeDB
 class Company:
   def __init__(self, id: str):
     self.id: str = id
-    self.__soup: BeautifulSoup = Scraper.get_url_soup(self.get_url())
 
+  def exists_in_db(self) -> bool:
+    ScrapeDB.cur.execute("""Select 1 FROM companies WHERE id=%(id)s""", {'id': self.get_id()})
+
+    self.exists_in_db = ScrapeDB.cur.fetchone() is not None
+
+    return self.exists_in_db
+
+  def load_from_db(self) -> None:
+    if not self.exists_in_db():
+      return None
+
+    ScrapeDB.cur.execute("""Select * FROM companies WHERE id=%(id)s""", {'id': self.get_id()})
+
+    row = ScrapeDB.cur.fetchone()
+
+    row_dict = dict(row) if row is not None else dict()
+
+    self.name: str = row_dict.get('name')
+    self.sector: str = row_dict.get('sector')
+    self.office_location: str = row_dict.get('office_location')
+    self.website_url: str = row_dict.get('website_url')
+    self.presentation: str = row_dict.get('presentation')
+    self.looking_for: str = row_dict.get('looking_for')
+    self.good_to_know: str = row_dict.get('good_to_know')
+    self.creation_year: str = row_dict.get('creation_year')
+    self.number_employees: str = row_dict.get('number_employees')
+    self.parity_percent_women: str = row_dict.get('parity_percent_women')
+    self.parity_percent_men: str = row_dict.get('parity_percent_men')
+    self.average_age: str = row_dict.get('average_age')
+    self.url: str = row_dict.get('url')
+
+  def scrape_all_attributes(self) -> None:
+    self.__soup: BeautifulSoup = Scraper.get_url_soup(self.get_url())
     self.name: str = self.__scrape_name()
     self.sector: str = self.__scrape_sector()
     self.office_location: str = self.__scrape_office_location()
@@ -140,6 +172,7 @@ class Company:
     }
 
   def save_to_db(self) -> None:
+    """Saves the company data in the database."""
     row_data: dict = self.to_dict()
     ScrapeDB.cur.execute("""INSERT INTO companies(
       id,

@@ -1,5 +1,6 @@
 from .scraper import Scraper
 from .database import ScrapeDB
+from .company import Company
 import re
 
 class JobOffer:
@@ -11,11 +12,42 @@ class JobOffer:
 
   def __init__(self, url: str):
     self.url: str = url
-    self.__soup: BeautifulSoup = Scraper.get_url_soup(self.url)
 
     regex_search_result = re.search('companies\/(?P<company_id>[^\/]+)\/jobs\/(?P<job_id>[^\/?]+)', self.url)
     self.id: str = regex_search_result.group('job_id')
-    self.company_id: str = regex_search_result.group('company_id')
+    company_id: str = regex_search_result.group('company_id')
+    self.company: Company = Company(company_id)
+
+  def exists_in_db(self) -> bool:
+    ScrapeDB.cur.execute("""Select 1 FROM job_offers WHERE id=%(id)s AND company_id=%(company_id)s""", {'id': self.get_id(), 'company_id': self.get_company().get_id()})
+
+    return ScrapeDB.cur.fetchone() is not None
+
+  def load_from_db(self) -> None:
+    if not self.exists_in_db():
+      return None
+
+    ScrapeDB.cur.execute("""Select * FROM job_offers WHERE id=%(id)s""", {'id': self.get_id()})
+
+    row = ScrapeDB.cur.fetchone()
+
+    row_dict = dict(row) if row is not None else dict()
+
+    self.title: str = row_dict.get('title')
+    self.description: str = row_dict.get('description')
+    self.preferred_experience: str = row_dict.get('preferred_experience')
+    self.recruitment_process: str = row_dict.get('recruitment_process')
+    self.contract: str = row_dict.get('contract')
+    self.location: str = row_dict.get('location')
+    self.salary: str = row_dict.get('salary')
+    self.starting_date: str = row_dict.get('starting_date')
+    self.remote: str = row_dict.get('remote')
+    self.experience: str = row_dict.get('experience')
+    self.education: str = row_dict.get('education')
+    self.date: str = row_dict.get('date')
+
+  def scrape_all_attributes(self) -> None:
+    self.__soup: BeautifulSoup = Scraper.get_url_soup(self.get_url())
     self.title: str = self.__scrape_title()
     self.description: str = self.__scrape_description()
     self.preferred_experience: str = self.__scrape_preferred_experience()
@@ -32,8 +64,8 @@ class JobOffer:
   def get_id(self) -> str:
     return self.id
 
-  def get_company_id(self) -> str:
-    return self.company_id
+  def get_company(self) -> Company:
+    return self.company
 
   def get_url(self) -> str:
     return self.url
@@ -137,7 +169,7 @@ class JobOffer:
   def to_dict(self):
     return {
       'id': self.get_id(),
-      'company_id': self.get_company_id(),
+      'company_id': self.get_company().get_id(),
       'title': self.get_title(),
       'url': self.get_url(),
       'description': self.get_description(),
@@ -153,7 +185,7 @@ class JobOffer:
       'date': self.get_date()
     }
 
-  def save_to_db(self):
+  def save_to_db(self) -> None:
     """Saves the job data in the database."""
     row_data: dict = self.to_dict()
     row_data['scrape_id'] = ScrapeDB.scrape_id

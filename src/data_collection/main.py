@@ -1,5 +1,5 @@
 # Imports
-from welcome_to_the_jungle import SearchPage, JobOffer, ScrapeDB
+from welcome_to_the_jungle import SearchPage, JobOffer, ScrapeDB, Company
 
 # Variables
 total_job_offers_urls = set()
@@ -26,7 +26,18 @@ print('[PROCESS] retrieving job offers data.')
 
 # Scraping all job offers
 for job_offer_url in total_job_offers_urls:
-  JobOffer(job_offer_url).save_to_db()
+  job_offer = JobOffer(job_offer_url)
+  job_offer_company = job_offer.get_company()
+
+  if job_offer.exists_in_db():
+    continue
+
+  if not job_offer_company.exists_in_db():
+    job_offer_company.scrape_all_attributes()
+    job_offer_company.save_to_db()
+
+  job_offer.scrape_all_attributes()
+  job_offer.save_to_db()
 
 # closing connection to the database
 ScrapeDB.close()

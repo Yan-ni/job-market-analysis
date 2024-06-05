@@ -51,6 +51,7 @@ class ScrapeDB:
       date TEXT,
       scrape_id INTEGER,
       PRIMARY KEY (id, company_id),
+      FOREIGN KEY (company_id) REFERENCES companies(id),
       FOREIGN KEY (scrape_id) REFERENCES scrapes(id))"""
     )
 
