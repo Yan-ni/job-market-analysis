@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
 import time
 import re
 
@@ -8,16 +9,18 @@ SLEEP_TIME=1
 
 class Scraper:
   """A representation of the scraper that is a combination of selenium and beautiful soup."""
-  chrome_options = Options()
-  chrome_options.add_argument("--headless=new")
-  browser = Chrome(options=chrome_options) # Path to chromium argument is optional, if not specified will search path.
 
-  @classmethod
-  def get_url_soup(cls, url: str) -> BeautifulSoup:
+  @staticmethod
+  def get_url_soup(url: str) -> BeautifulSoup:
     """Fetch the url and return its page source soup."""
-    cls.browser.get(url)
+    chrome_options = Options()
+    chrome_options.add_argument("--headless=new")
+    browser = Chrome(options=chrome_options) # Path to chromium argument is optional, if not specified will search path.
+    browser.get(url)
+    wait = WebDriverWait(browser, 10)
+    wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
     time.sleep(SLEEP_TIME)
-    return BeautifulSoup(cls.browser.page_source, 'html.parser')
+    return BeautifulSoup(browser.page_source, 'html.parser')
 
   @staticmethod
   def get_soup_text(soup: BeautifulSoup) -> str:
