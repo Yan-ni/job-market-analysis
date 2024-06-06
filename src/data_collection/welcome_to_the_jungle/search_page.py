@@ -13,14 +13,16 @@ class SearchPage:
   - page (int): The number of the page of the search result.
   """
 
-  def __init__(self, *, page_number=1, country_code="FR", contract_type="FULL_TIME", query="data analyst", location="Ile-de-France, France"):
+  def __init__(self, *, db_cursor, page_number=1, country_code="FR", contract_type="FULL_TIME", query="data analyst", location="Ile-de-France, France"):
     self.country_code = country_code
     self.contract_type = contract_type
     self.query = query
     self.location = location
     self.page_number = page_number
 
-    ScrapeDB.cur.execute("""UPDATE scrapes SET
+    self.__db_cur = db_cursor
+
+    self.__db_cur.execute("""UPDATE scrapes SET
       query = %(query)s,
       contract_type = %(contract_type)s,
       location = %(location)s,
@@ -32,7 +34,7 @@ class SearchPage:
         'country_code': self.get_country_code(),
         'scrape_id': ScrapeDB.scrape_id
       })
-    ScrapeDB.con.commit()
+    self.__db_cur.connection.commit()
 
   def get_country_code(self):
     return self.country_code
@@ -66,4 +68,4 @@ class SearchPage:
 
   def next_page(self) -> Self:
     """Return next search page"""
-    return SearchPage(page_number=(self.page_number + 1))
+    return SearchPage(page_number=(self.page_number + 1), db_cursor=self.__db_cur)

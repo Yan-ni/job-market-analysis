@@ -4,29 +4,42 @@ import concurrent.futures
 
 # Functions
 def process_job_offer(job_offer_url):
-  job_offer = JobOffer(job_offer_url)
-  job_offer_company = job_offer.get_company()
+  try:
+    db_pool = ScrapeDB.get_pool()
+    print('[DATABASE] GETTING DB CONNECTION FROM DB POOL')
+    db_connection = db_pool.getconn()
+    db_cursor = db_connection.cursor()
 
-  if job_offer.exists_in_db():
-    print('job offer already exists in the Databse!')
-    return None
+    job_offer = JobOffer(url=job_offer_url, db_cursor=db_cursor)
+    job_offer_company = job_offer.get_company()
 
-  if not job_offer_company.exists_in_db():
-    print('scraping the job offer company.')
-    job_offer_company.scrape_all_attributes()
-    print('saving company data in the database.')
-    job_offer_company.save_to_db()
+    if not job_offer.exists_in_db():
+      if not job_offer_company.exists_in_db():
+        job_offer_company.scrape_all_attributes()
+        job_offer_company.save_to_db()
+        print(f'[DATABASE] saving the "company":"{job_offer_company.get_name()}" data in the database.')
 
-  print('scraping the job offer data.')
-  job_offer.scrape_all_attributes()
-  print('saving the job offer data in the database.')
-  job_offer.save_to_db()
+      job_offer.scrape_all_attributes()
+      print(f'[DATABASE] saving the "job offer":"{job_offer.get_title()}" data in the database.')
+      job_offer.save_to_db()
+    else:
+      print(f'[INFO] "job offer":"({job_offer.get_id()}, {job_offer_company.get_id()})" already exists!')
+    print('[DATABASE] PUTTING AWAY DATABASE CONNECTION CONNECTION')
+    db_cursor.close()
+    db_pool.putconn(db_connection)
+  except Exception as e:
+    print(f'[ERROR] An error occurred: {e}')
 
 def main():
   total_job_offers_urls = set()
 
+  ScrapeDB.init()
+
+  db_connection = ScrapeDB.get_con()
+  db_cursor = db_connection.cursor()
+
   # Scraping Welcome To The Jungle all search result pages
-  search_page = SearchPage()
+  search_page = SearchPage(db_cursor=db_cursor)
 
   print('[PROCESS] retrieving job offers list from search page.')
   print('{:<8} {:<8}'.format('Page', 'Job offers'))
@@ -43,12 +56,13 @@ def main():
 
     search_page = search_page.next_page()
 
+  db_cursor.close()
+  db_connection.close()
+
   print('[PROCESS] retrieving job offers data.')
 
-  with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+  with concurrent.futures.ProcessPoolExecutor(max_workers=6) as executor:
     executor.map(process_job_offer, total_job_offers_urls)
-
-  ScrapeDB.close()
 
 if __name__ == '__main__':
   main()

@@ -10,26 +10,27 @@ class JobOffer:
   - ulr (str): The url to the job offer.
   """
 
-  def __init__(self, url: str):
+  def __init__(self, url: str, db_cursor):
+    self.__db_cur = db_cursor
     self.url: str = url
 
     regex_search_result = re.search('companies\/(?P<company_id>[^\/]+)\/jobs\/(?P<job_id>[^\/?]+)', self.url)
     self.id: str = regex_search_result.group('job_id')
     company_id: str = regex_search_result.group('company_id')
-    self.company: Company = Company(company_id)
+    self.company: Company = Company(company_id, db_cursor=self.__db_cur)
 
   def exists_in_db(self) -> bool:
-    ScrapeDB.cur.execute("""Select 1 FROM job_offers WHERE id=%(id)s AND company_id=%(company_id)s""", {'id': self.get_id(), 'company_id': self.get_company().get_id()})
+    self.__db_cur.execute("""Select 1 FROM job_offers WHERE id=%(id)s AND company_id=%(company_id)s""", {'id': self.get_id(), 'company_id': self.get_company().get_id()})
 
-    return ScrapeDB.cur.fetchone() is not None
+    return self.__db_cur.fetchone() is not None
 
   def load_from_db(self) -> None:
     if not self.exists_in_db():
       return None
 
-    ScrapeDB.cur.execute("""Select * FROM job_offers WHERE id=%(id)s""", {'id': self.get_id()})
+    self.__db_cur.execute("""SELECT * FROM job_offers WHERE id=%(id)s""", {'id': self.get_id()})
 
-    row = ScrapeDB.cur.fetchone()
+    row = self.__db_cur.fetchone()
 
     row_dict = dict(row) if row is not None else dict()
 
@@ -189,7 +190,7 @@ class JobOffer:
     """Saves the job data in the database."""
     row_data: dict = self.to_dict()
     row_data['scrape_id'] = ScrapeDB.scrape_id
-    ScrapeDB.cur.execute("""INSERT INTO job_offers(
+    self.__db_cur.execute("""INSERT INTO job_offers(
       id,
       company_id,
       title,
@@ -222,6 +223,6 @@ class JobOffer:
       %(experience)s,
       %(education)s,
       %(date)s) ON CONFLICT DO NOTHING""", row_data)
-    ScrapeDB.con.commit()
     
-    print('[SAVING] {:<80} @ {:<50}'.format(row_data.get('id'), row_data.get('company_id')))
+    self.__db_cur.connection.commit()
+

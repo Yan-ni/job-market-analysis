@@ -2,13 +2,14 @@ from .scraper import Scraper
 from .database import ScrapeDB
 
 class Company:
-  def __init__(self, id: str):
+  def __init__(self, id: str, db_cursor):
+    self.__db_cur = db_cursor
     self.id: str = id
 
   def exists_in_db(self) -> bool:
-    ScrapeDB.cur.execute("""Select 1 FROM companies WHERE id=%(id)s""", {'id': self.get_id()})
+    self.__db_cur.execute("""Select 1 FROM companies WHERE id=%(id)s""", {'id': self.get_id()})
 
-    self.exists_in_db = ScrapeDB.cur.fetchone() is not None
+    self.exists_in_db = self.__db_cur.fetchone() is not None
 
     return self.exists_in_db
 
@@ -16,9 +17,9 @@ class Company:
     if not self.exists_in_db():
       return None
 
-    ScrapeDB.cur.execute("""Select * FROM companies WHERE id=%(id)s""", {'id': self.get_id()})
+    self.__db_cur.execute("""SELECT * FROM companies WHERE id=%(id)s""", {'id': self.get_id()})
 
-    row = ScrapeDB.cur.fetchone()
+    row = self.__db_cur.fetchone()
 
     row_dict = dict(row) if row is not None else dict()
 
@@ -174,7 +175,7 @@ class Company:
   def save_to_db(self) -> None:
     """Saves the company data in the database."""
     row_data: dict = self.to_dict()
-    ScrapeDB.cur.execute("""INSERT INTO companies(
+    self.__db_cur.execute("""INSERT INTO companies(
       id,
       name,
       sector,
@@ -203,3 +204,5 @@ class Company:
       %(parity_percent_men)s,
       %(average_age)s,
       %(url)s) ON CONFLICT DO NOTHING""", row_data)
+
+    self.__db_cur.connection.commit()

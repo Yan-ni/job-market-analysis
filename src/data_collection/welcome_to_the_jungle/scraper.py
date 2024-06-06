@@ -17,7 +17,7 @@ class Scraper:
     chrome_options.add_argument("--headless=new")
     browser = Chrome(options=chrome_options) # Path to chromium argument is optional, if not specified will search path.
     browser.get(url)
-    wait = WebDriverWait(browser, 10)
+    wait = WebDriverWait(browser, 60)  # wait up to 60 seconds to timeout
     wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
     time.sleep(SLEEP_TIME)
     return BeautifulSoup(browser.page_source, 'html.parser')
