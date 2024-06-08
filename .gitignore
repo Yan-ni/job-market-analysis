@@ -10,3 +10,7 @@ __pycache__/
 # Distribution / packaging
 dist/
 .DS_Store
+
+# Logs
+logs
+.log
