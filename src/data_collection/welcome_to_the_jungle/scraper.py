@@ -4,8 +4,20 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 import time
 import re
+from dotenv import load_dotenv
+import os
 
-SLEEP_TIME=1
+def get_sleep_time():
+  load_dotenv()
+
+  SCRAPER_SLEEP_TIME = os.environ.get('SCRAPER_SLEEP_TIME')
+
+  if SCRAPER_SLEEP_TIME is None:
+    SCRAPER_SLEEP_TIME = 1
+
+  return int(SCRAPER_SLEEP_TIME)
+
+SLEEP_TIME = get_sleep_time()
 
 class Scraper:
   """A representation of the scraper that is a combination of selenium and beautiful soup."""
