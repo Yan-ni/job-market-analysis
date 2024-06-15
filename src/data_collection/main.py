@@ -85,7 +85,7 @@ def main():
 
   print('[PROCESS] retrieving job offers data.')
 
-  with concurrent.futures.ProcessPoolExecutor(max_workers=6) as executor:
+  with concurrent.futures.ProcessPoolExecutor() as executor:
     executor.map(process_job_offer, total_job_offers_urls)
 
 if __name__ == '__main__':
