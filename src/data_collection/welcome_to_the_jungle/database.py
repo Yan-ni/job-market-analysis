@@ -2,6 +2,8 @@ import psycopg2
 import psycopg2.extras
 import psycopg2.pool
 import time
+from dotenv import load_dotenv
+import os
 
 class ScrapeDB:
   """A representation of the database that holds the scraping data."""
@@ -10,6 +12,13 @@ class ScrapeDB:
 
   @classmethod
   def init(cls):
+    load_dotenv()
+
+    cls.hostname = os.environ.get('POSTGRES_HOSTNAME')
+    cls.database = os.environ.get('POSTGRES_DB')
+    cls.user = os.environ.get('POSTGRES_USER')
+    cls.password = os.environ.get('POSTGRES_PASSWORD')
+
     con = cls.get_con()
     cur = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
@@ -72,9 +81,9 @@ class ScrapeDB:
 
     print('[INFO] database ready!')
 
-  @staticmethod
-  def get_con():
-    return psycopg2.connect(user="postgres", password="password", host="localhost")
+  @classmethod
+  def get_con(cls):
+    return psycopg2.connect(database=cls.database, user=cls.user, password=cls.password, host=cls.hostname)
 
   @classmethod
   def get_scrape_id(cls):
@@ -82,7 +91,12 @@ class ScrapeDB:
 
   @classmethod
   def create_pool(cls):
-    cls.__pool = psycopg2.pool.ThreadedConnectionPool(1, 10, user="postgres", password="password", host="localhost")
+    cls.__pool = psycopg2.pool.ThreadedConnectionPool(1,
+                                                      10,
+                                                      database=cls.database,
+                                                      user=cls.user,
+                                                      password=cls.password,
+                                                      host=cls.hostname)
   
   @classmethod
   def get_pool(cls):
