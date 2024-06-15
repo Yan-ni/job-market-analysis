@@ -15,6 +15,8 @@ class Scraper:
     """Fetch the url and return its page source soup."""
     chrome_options = Options()
     chrome_options.add_argument("--headless=new")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument('--disable-dev-shm-usage')
     browser = Chrome(options=chrome_options) # Path to chromium argument is optional, if not specified will search path.
     browser.get(url)
     wait = WebDriverWait(browser, 60)  # wait up to 60 seconds to timeout
