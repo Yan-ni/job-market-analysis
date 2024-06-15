@@ -13,3 +13,5 @@ echo "0 3 * * * $SCRIPT_FILE" >> "$TEMP_CRON" # Every day at 03:00
 crontab "$TEMP_CRON"
 
 rm "$TEMP_CRON"
+
+service cron reload
