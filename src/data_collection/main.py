@@ -67,6 +67,8 @@ def parse_arguments():
 def main():
   args = parse_arguments()
 
+  logging_level = logging.INFO
+
   if args.debug is True:
     logging_level = logging.DEBUG
 
