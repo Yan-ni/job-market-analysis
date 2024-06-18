@@ -1,11 +1,9 @@
-version: "3.8"
-
 services:
   db:
     image: postgres
     container_name: WTTJ-database
     restart: always
-    env_file: ".env"
+    env_file: .env
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
@@ -17,10 +15,12 @@ services:
       retries: 5
   script:
     build: .
-    env_file: ".env"
+    env_file: .env
     depends_on:
       db:
         condition: service_healthy
+    volumes:
+      - ./src:/app/src
 
 volumes:
   pgdata:
