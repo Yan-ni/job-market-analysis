@@ -1,5 +1,4 @@
 .venv/
-*.txt
 *.md
 *.sh
 .gitignore
