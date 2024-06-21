@@ -13,6 +13,11 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 3030:8080
   script:
     build: .
     env_file: .env
