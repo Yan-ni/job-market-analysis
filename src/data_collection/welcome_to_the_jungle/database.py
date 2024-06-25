@@ -66,12 +66,24 @@ class ScrapeDB:
         experience TEXT,
         education TEXT,
         date TEXT,
+        deleted_at DATE DEFAULT NULL,
         scrape_id INTEGER,
         PRIMARY KEY (id, company_id),
         FOREIGN KEY (company_id) REFERENCES companies(id),
         FOREIGN KEY (scrape_id) REFERENCES scrapes(id))"""
       )
 
+    con.commit()
+    cur.close()
+    con.close()
+
+    logging.info('database ready!')
+
+  @classmethod
+  def insert_scrape_id(cls):
+    con = cls.get_con()
+    cur = con.cursor()
+    
     cur.execute('INSERT INTO scrapes(started_at) VALUES(%s) RETURNING id', [int(time.time())])
     
     cls.scrape_id = cur.fetchone()[0]
@@ -80,7 +92,6 @@ class ScrapeDB:
     cur.close()
     con.close()
 
-    logging.info('database ready!')
 
   @classmethod
   def get_con(cls):

@@ -47,8 +47,11 @@ class JobOffer:
     self.education: str = row_dict.get('education')
     self.date: str = row_dict.get('date')
 
+  def __get_soup(self):
+    return Scraper.get_url_soup(self.get_url())
+
   def scrape_all_attributes(self) -> None:
-    self.__soup: BeautifulSoup = Scraper.get_url_soup(self.get_url())
+    self.__soup: BeautifulSoup = self.__get_soup()
     self.title: str = self.__scrape_title()
     self.description: str = self.__scrape_description()
     self.preferred_experience: str = self.__scrape_preferred_experience()
@@ -158,6 +161,12 @@ class JobOffer:
     education_icon_tag = self.__soup.select_one('i[name="education_level"]')
 
     return education_icon_tag.parent.get_text(' ') if education_icon_tag is not None else None
+
+  def is_deleted(self) -> str:
+    if hasattr(self, '__soup') is False:
+      self.__soup = self.__get_soup()
+
+    return self.__soup.select_one('svg[alt="Alert"]') is not None
 
   def get_date(self) -> str:
     return self.date

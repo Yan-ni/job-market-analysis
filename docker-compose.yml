@@ -26,6 +26,16 @@ services:
         condition: service_healthy
     volumes:
       - ./src:/app/src
+    command: python3 src/data_collection/main.py
+  update-deleted-script:
+    build: .
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src
+    command: python3 src/data_collection/update_deleted.py
 
 volumes:
   pgdata:

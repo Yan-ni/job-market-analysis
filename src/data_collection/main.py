@@ -43,6 +43,7 @@ def main():
   total_job_offers_urls = set()
 
   ScrapeDB.init()
+  ScrapeDB.insert_scrape_id()
 
   db_connection = ScrapeDB.get_con()
   db_cursor = db_connection.cursor()
