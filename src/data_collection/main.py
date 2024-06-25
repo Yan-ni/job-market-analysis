@@ -49,7 +49,7 @@ def main():
   db_cursor = db_connection.cursor()
 
   # Scraping Welcome To The Jungle all search result pages
-  search_page = SearchPage(db_cursor=db_cursor)
+  search_page = SearchPage(db_cursor=db_cursor, location='France')
 
   logging.info('retrieving job offers list from search page...')
   logging.debug('{:<8} {:<8}'.format('Page', 'Job offers'))
