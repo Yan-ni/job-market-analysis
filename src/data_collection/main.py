@@ -52,7 +52,7 @@ def main():
   # Scraping Welcome To The Jungle all search result pages
   search_page = SearchPage(db_cursor=db_cursor, location='France', query=args.query)
 
-  logging.info('retrieving job offers list from search page...')
+  logging.info(f'retrieving job offers list from search page: {{query: {search_page.get_query()}, location: {search_page.get_location()}}}')
   logging.debug('{:<8} {:<8}'.format('Page', 'Job offers'))
 
   while True:
