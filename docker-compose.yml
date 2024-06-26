@@ -18,7 +18,7 @@ services:
     restart: always
     ports:
       - 3030:8080
-  script:
+  da-script:
     build: .
     env_file: .env
     depends_on:
@@ -26,7 +26,16 @@ services:
         condition: service_healthy
     volumes:
       - ./src:/app/src
-    command: python3 src/data_collection/main.py
+    command: python3 src/data_collection/main.py --query "data analyst"
+  ds-script:
+    build: .
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src
+    command: python3 src/data_collection/main.py --query "data scientist"
   update-deleted-script:
     build: .
     env_file: .env

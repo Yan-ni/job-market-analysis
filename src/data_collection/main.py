@@ -2,7 +2,7 @@
 from welcome_to_the_jungle import SearchPage, JobOffer, ScrapeDB
 import concurrent.futures
 from dotenv import load_dotenv as load_env_var
-from utils.functions import check_env_var, config_logging
+from utils.functions import check_env_var, config_logging, parse_arguments
 import logging
 import traceback
 
@@ -36,9 +36,10 @@ def process_job_offer(job_offer_url):
     logging.error(traceback.format_exc())
 
 def main():
+  args = parse_arguments()
+  config_logging(args.debug)
   load_env_var()
   check_env_var()
-  config_logging()
 
   total_job_offers_urls = set()
 
@@ -49,7 +50,7 @@ def main():
   db_cursor = db_connection.cursor()
 
   # Scraping Welcome To The Jungle all search result pages
-  search_page = SearchPage(db_cursor=db_cursor, location='France')
+  search_page = SearchPage(db_cursor=db_cursor, location='France', query=args.query)
 
   logging.info('retrieving job offers list from search page...')
   logging.debug('{:<8} {:<8}'.format('Page', 'Job offers'))
