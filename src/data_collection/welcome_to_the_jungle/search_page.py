@@ -52,8 +52,8 @@ class SearchPage:
     return self.page_number
 
   def get_url(self) -> str:
-    return f'https://www.welcometothejungle.com/en/jobs?refinementList[offices.country_code][]={self.get_country_code()}&refinementList[offices.state][]=Ile-de-France&refinementList[contract_type][]={self.get_contract_type()}&query={self.get_query()}&page={self.get_page_number()}&aroundQuery={self.get_location()}&searchTitle=true'
-  
+    return f'https://www.welcometothejungle.com/en/jobs?refinementList[offices.country_code][]={self.get_country_code()}&refinementList[contract_type][]={self.get_contract_type()}&query={self.get_query()}&page={self.get_page_number()}&aroundQuery={self.get_location()}&searchTitle=true'
+
   def get_jobs_offers_urls(self) -> set[str]:
     """Return a set of job urls present in the current search page."""
     soup = Scraper.get_url_soup(self.get_url())
