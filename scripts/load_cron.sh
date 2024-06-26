@@ -2,7 +2,7 @@
 
 # Variables
 DIR_PATH=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-DA_MAIN_SCRIPT_FILE="$DIR_PATH/data_collection.sh --container ds-script"
+DA_MAIN_SCRIPT_FILE="$DIR_PATH/data_collection.sh --container da-script"
 DS_MAIN_SCRIPT_FILE="$DIR_PATH/data_collection.sh --container ds-script"
 UPDATE_DELETED_SCRIPT_FILE="$DIR_PATH/update_deleted.sh"
 TEMP_CRON="/tmp/crontab_temp"
