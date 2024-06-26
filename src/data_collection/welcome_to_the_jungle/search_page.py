@@ -22,6 +22,7 @@ class SearchPage:
 
     self.__db_cur = db_cursor
 
+  def save_scrape_to_db(self):
     self.__db_cur.execute("""UPDATE scrapes SET
       query = %(query)s,
       contract_type = %(contract_type)s,
@@ -68,4 +69,4 @@ class SearchPage:
 
   def next_page(self) -> Self:
     """Return next search page"""
-    return SearchPage(page_number=(self.page_number + 1), db_cursor=self.__db_cur)
+    return SearchPage(page_number=(self.page_number + 1), db_cursor=self.__db_cur, country_code=self.country_code, contract_type=self.contract_type, query=self.query)
