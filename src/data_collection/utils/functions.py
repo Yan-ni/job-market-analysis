@@ -27,6 +27,7 @@ def parse_arguments():
   parser = argparse.ArgumentParser()
   parser.add_argument('-d', '--debug', help="sets logging level to debug", action="store_true")
   parser.add_argument('-q', '--query', help="the query you want to scrape", default="")
+  parser.add_argument('-ud', '--update-deleted', help="only updates the deleted job offers", action="store_true")
   
   args = parser.parse_args()
   

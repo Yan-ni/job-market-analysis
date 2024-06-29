@@ -48,7 +48,7 @@ services:
         condition: service_healthy
     volumes:
       - ./src:/app/src
-    command: python3 src/data_collection/update_deleted.py
+    command: --update-deleted
 
 volumes:
   pgdata:
