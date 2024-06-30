@@ -26,7 +26,7 @@ def check_env_var():
 def parse_arguments():
   parser = argparse.ArgumentParser()
   parser.add_argument('-d', '--debug', help="sets logging level to debug", action="store_true")
-  parser.add_argument('-q', '--query', help="the query you want to scrape", default=None)
+  parser.add_argument('-q', '--query', help="the query you want to scrape", default="")
   
   args = parser.parse_args()
   
