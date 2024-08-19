@@ -2,15 +2,6 @@
 
 The goal of this project is to apply data analysis concepts to analyze the job market in France.
 
-## Project structure
-
-This project follows the data analysis process:
-
-1. Data Collection ⚙️.
-2. Data Cleaning & Reduction 🧼.
-3. Data Transformation 🪄.
-4. Data Visualization 📊.
-
 ## Technologies Utilized
 
 - Selenium & Beautiful Soup: For dynamic web page loading & scraping.
