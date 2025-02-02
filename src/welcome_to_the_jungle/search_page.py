@@ -1,4 +1,4 @@
-from .scraper import Scraper
+from scraper import Scraper
 from .database import ScrapeDB
 
 class SearchPage:

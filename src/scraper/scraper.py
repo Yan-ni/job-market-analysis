@@ -4,20 +4,14 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 import time
 import re
+
 from dotenv import load_dotenv
 import os
 
-def get_sleep_time():
-  load_dotenv()
+load_dotenv()
 
-  SCRAPER_SLEEP_TIME = os.environ.get('SCRAPER_SLEEP_TIME')
+SCRAPER_SLEEP_TIME = int(os.environ.get('SCRAPER_SLEEP_TIME', 1))
 
-  if SCRAPER_SLEEP_TIME is None:
-    SCRAPER_SLEEP_TIME = 1
-
-  return int(SCRAPER_SLEEP_TIME)
-
-SLEEP_TIME = get_sleep_time()
 
 class Scraper:
   """A representation of the scraper that is a combination of selenium and beautiful soup."""
@@ -33,7 +27,7 @@ class Scraper:
     browser.get(url)
     wait = WebDriverWait(browser, 60)  # wait up to 60 seconds to timeout
     wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
-    time.sleep(SLEEP_TIME)
+    time.sleep(SCRAPER_SLEEP_TIME)
     return BeautifulSoup(browser.page_source, 'html.parser')
 
   @staticmethod
