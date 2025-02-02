@@ -36,7 +36,7 @@ class Scraper:
     This method prevents having randomly broken words or inconsistent returns.
     """
     text_list = list()
-    soup_elements = soup.find_all(['p', 'li'])
+    soup_elements = soup.find_all(['p', 'li', 'h4'])
 
     if len(soup_elements) == 0:
       return None
@@ -47,6 +47,7 @@ class Scraper:
 
       for br in soup_element.find_all("br"):
         br.replace_with("\n")
+
       text_list.append(soup_element.get_text(''))
 
     text = "\n".join(text_list)
