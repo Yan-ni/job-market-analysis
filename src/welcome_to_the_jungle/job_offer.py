@@ -150,7 +150,7 @@ class JobOffer:
     return self.experience
 
   def __scrape_experience(self) -> str:
-    experience_icon_tag = self.__soup.select_one('i[name="suitcase"]')
+    experience_icon_tag = self.__soup.select_one('div[data-testid="job-metadata-block"] i[name="suitcase"]')
 
     return experience_icon_tag.parent.get_text(' ') if experience_icon_tag is not None else None
 
