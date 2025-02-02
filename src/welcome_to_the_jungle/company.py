@@ -1,5 +1,5 @@
-from .scraper import Scraper
-from .database import ScrapeDB
+from scraper import Scraper
+from bs4 import BeautifulSoup
 
 class Company:
   def __init__(self, id: str, db_cursor):

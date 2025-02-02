@@ -1,6 +1,5 @@
-from .scraper import Scraper
-from .database import ScrapeDB
-from typing import Self
+from scraper import Scraper
+from database import ScrapeDB
 
 class SearchPage:
   """A representation of (welcome to the jungle) search page.
@@ -67,6 +66,6 @@ class SearchPage:
 
     return jobs_urls
 
-  def next_page(self) -> Self:
+  def next_page(self):
     """Return next search page"""
     return SearchPage(page_number=(self.page_number + 1), db_cursor=self.__db_cur, country_code=self.country_code, contract_type=self.contract_type, query=self.query)

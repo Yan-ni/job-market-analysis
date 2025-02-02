@@ -77,7 +77,7 @@ class ScrapeDB:
     cur.close()
     con.close()
 
-    logging.info('database ready!')
+    # logging.info('database ready!')
 
   @classmethod
   def insert_scrape_id(cls):
