@@ -1,5 +1,5 @@
 from scraper import Scraper
-from .database import ScrapeDB
+from database import ScrapeDB
 
 class SearchPage:
   """A representation of (welcome to the jungle) search page.

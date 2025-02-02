@@ -1,4 +1,5 @@
-from welcome_to_the_jungle import SearchPage, JobOffer, ScrapeDB
+from welcome_to_the_jungle import SearchPage, JobOffer
+from database import ScrapeDB
 import concurrent.futures
 from datetime import datetime
 import logging

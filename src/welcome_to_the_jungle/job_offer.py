@@ -1,5 +1,5 @@
 from scraper import Scraper
-from .database import ScrapeDB
+from database import ScrapeDB
 from .company import Company
 from bs4 import BeautifulSoup
 import re
