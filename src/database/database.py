@@ -6,24 +6,27 @@ import time
 from dotenv import load_dotenv
 import os
 
+
 class ScrapeDB:
-  """A representation of the database that holds the scraping data."""
-  __pool = None
-  scrape_id = None
+    """A representation of the database that holds the scraping data."""
 
-  @classmethod
-  def init(cls):
-    load_dotenv()
+    __pool = None
+    scrape_id = None
 
-    cls.hostname = os.environ.get('POSTGRES_HOSTNAME')
-    cls.database = os.environ.get('POSTGRES_DB')
-    cls.user = os.environ.get('POSTGRES_USER')
-    cls.password = os.environ.get('POSTGRES_PASSWORD')
+    @classmethod
+    def init(cls):
+        load_dotenv()
 
-    con = cls.get_con()
-    cur = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cls.hostname = os.environ.get("POSTGRES_HOSTNAME")
+        cls.database = os.environ.get("POSTGRES_DB")
+        cls.user = os.environ.get("POSTGRES_USER")
+        cls.password = os.environ.get("POSTGRES_PASSWORD")
 
-    cur.execute("""CREATE TABLE IF NOT EXISTS scrapes(
+        con = cls.get_con()
+        cur = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        cur.execute(
+            """CREATE TABLE IF NOT EXISTS scrapes(
         id SERIAL PRIMARY KEY,
         query TEXT,
         contract_type TEXT,
@@ -31,9 +34,10 @@ class ScrapeDB:
         country_code TEXT,
         started_at INTEGER,
         ended_at INTEGER)"""
-      )
+        )
 
-    cur.execute("""CREATE TABLE IF NOT EXISTS companies(
+        cur.execute(
+            """CREATE TABLE IF NOT EXISTS companies(
         id TEXT PRIMARY KEY,
         name TEXT,
         sector TEXT,
@@ -48,9 +52,10 @@ class ScrapeDB:
         parity_percent_men TEXT,
         average_age TEXT,
         url TEXT)"""
-      )
+        )
 
-    cur.execute("""CREATE TABLE IF NOT EXISTS job_offers(
+        cur.execute(
+            """CREATE TABLE IF NOT EXISTS job_offers(
         id TEXT,
         company_id TEXT,
         title TEXT,
@@ -71,48 +76,57 @@ class ScrapeDB:
         PRIMARY KEY (id, company_id),
         FOREIGN KEY (company_id) REFERENCES companies(id),
         FOREIGN KEY (scrape_id) REFERENCES scrapes(id))"""
-      )
+        )
 
-    con.commit()
-    cur.close()
-    con.close()
+        con.commit()
+        cur.close()
+        con.close()
 
-    # logging.info('database ready!')
+        # logging.info('database ready!')
 
-  @classmethod
-  def insert_scrape_id(cls):
-    con = cls.get_con()
-    cur = con.cursor()
-    
-    cur.execute('INSERT INTO scrapes(started_at) VALUES(%s) RETURNING id', [int(time.time())])
-    
-    cls.scrape_id = cur.fetchone()[0]
+    @classmethod
+    def insert_scrape_id(cls):
+        con = cls.get_con()
+        cur = con.cursor()
 
-    con.commit()
-    cur.close()
-    con.close()
+        cur.execute(
+            "INSERT INTO scrapes(started_at) VALUES(%s) RETURNING id",
+            [int(time.time())],
+        )
 
+        cls.scrape_id = cur.fetchone()[0]
 
-  @classmethod
-  def get_con(cls):
-    return psycopg2.connect(database=cls.database, user=cls.user, password=cls.password, host=cls.hostname)
+        con.commit()
+        cur.close()
+        con.close()
 
-  @classmethod
-  def get_scrape_id(cls):
-    return cls.scrape_id
+    @classmethod
+    def get_con(cls):
+        return psycopg2.connect(
+            database=cls.database,
+            user=cls.user,
+            password=cls.password,
+            host=cls.hostname,
+        )
 
-  @classmethod
-  def create_pool(cls):
-    cls.__pool = psycopg2.pool.ThreadedConnectionPool(1,
-                                                      10,
-                                                      database=cls.database,
-                                                      user=cls.user,
-                                                      password=cls.password,
-                                                      host=cls.hostname)
-  
-  @classmethod
-  def get_pool(cls):
-    if cls.__pool is None:
-      cls.create_pool()
+    @classmethod
+    def get_scrape_id(cls):
+        return cls.scrape_id
 
-    return cls.__pool
+    @classmethod
+    def create_pool(cls):
+        cls.__pool = psycopg2.pool.ThreadedConnectionPool(
+            1,
+            10,
+            database=cls.database,
+            user=cls.user,
+            password=cls.password,
+            host=cls.hostname,
+        )
+
+    @classmethod
+    def get_pool(cls):
+        if cls.__pool is None:
+            cls.create_pool()
+
+        return cls.__pool
