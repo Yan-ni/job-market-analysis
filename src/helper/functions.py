@@ -88,7 +88,7 @@ def scrape_jobs(args):
         executor.map(process_job_offer, total_job_offers_urls)
 
 
-def update_deleted(args):
+def update_deleted():
     db_conn = ScrapeDB.get_con()
     db_cur = db_conn.cursor()
 
@@ -117,9 +117,9 @@ def update_deleted(args):
 
     db_cur.execute(
         """UPDATE job_offers
-                  SET deleted_at = %(deleted_at)s
-                  WHERE (id, company_id) IN %(deleted_job_offers_ids)s
-                  """,
+        SET deleted_at = %(deleted_at)s
+        WHERE (id, company_id) IN %(deleted_job_offers_ids)s
+        """,
         {
             "deleted_at": str(datetime.now().date()),
             "deleted_job_offers_ids": tuple(deleted_job_offers_ids),
