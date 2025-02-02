@@ -13,4 +13,4 @@ RUN apt-get update && apt-get install wget && \
 
 COPY . .
 
-ENTRYPOINT ["python3", "src/data_collection/main.py"]
+ENTRYPOINT ["python3", "src/main.py"]
