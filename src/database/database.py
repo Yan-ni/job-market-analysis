@@ -89,12 +89,16 @@ class ScrapeDB:
         con = cls.get_con()
         cur = con.cursor()
 
-        cur.execute(
-            "INSERT INTO scrapes(started_at) VALUES(%s) RETURNING id",
-            [int(time.time())],
-        )
+        cur.execute("SELECT id FROM scrapes ORDER BY id DESC LIMIT 1")
 
-        cls.scrape_id = cur.fetchone()[0]
+        db_res = cur.fetchone()
+
+        cls.scrape_id = db_res[0] + 1 if db_res is not None else 1
+
+        cur.execute(
+            "INSERT INTO scrapes(id, started_at) VALUES(%(id)s, %(started_at)s)",
+            {"id": cls.scrape_id, "started_at": int(time.time())},
+        )
 
         con.commit()
         cur.close()
