@@ -13,12 +13,17 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-  adminer:
-    image: adminer
-    container_name: jma-adminer
+  pgadmin:
+    container_name: jma-pgadmin
+    image: dpage/pgadmin4
     restart: always
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+      - PGADMIN_DISABLE_POSTFIX=true
     ports:
-      - 3030:8080
+      - 3030:80
+
   da-script:
     build: .
     container_name: jma-da-script
