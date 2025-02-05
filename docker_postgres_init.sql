@@ -1,0 +1,7 @@
+CREATE DATABASE raw_jma
+  WITH OWNER = root
+  ENCODING = 'UTF8';
+
+CREATE DATABASE std_jma
+  WITH OWNER = root
+  ENCODING = 'UTF8';

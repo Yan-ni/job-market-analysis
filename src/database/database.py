@@ -18,7 +18,7 @@ class ScrapeDB:
         load_dotenv()
 
         cls.hostname = os.environ.get("POSTGRES_HOSTNAME")
-        cls.database = os.environ.get("POSTGRES_DB")
+        cls.database = os.environ.get("POSTGRES_RAW_DB")
         cls.user = os.environ.get("POSTGRES_USER")
         cls.password = os.environ.get("POSTGRES_PASSWORD")
 
