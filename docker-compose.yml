@@ -55,6 +55,16 @@ services:
     volumes:
       - ./src:/app/src
     command: --update-deleted
+  data-cleaner:
+    container_name: jma-data-cleaner
+    build:
+      dockerfile: cleaner.dockerfile
+    volumes:
+      - ./src/cleaners:/app
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
 
 volumes:
   pgdata:
