@@ -2,6 +2,7 @@ from datetime import datetime, date, timedelta
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
 import pandas as pd
+import urllib
 import os
 import re
 
@@ -246,8 +247,8 @@ if __name__ == "__main__":
     POSTGRES_HOSTNAME = os.getenv("POSTGRES_HOSTNAME")
     POSTGRES_RAW_DB = os.getenv("POSTGRES_RAW_DB")
     POSTGRES_STD_DB = os.getenv("POSTGRES_STD_DB")
-    POSTGRES_USER = os.getenv("POSTGRES_USER")
-    POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
+    POSTGRES_USER = urllib.parse.quote(os.getenv("POSTGRES_USER"))
+    POSTGRES_PASSWORD = urllib.parse.quote(os.getenv("POSTGRES_PASSWORD"))
 
     raw_connection_string = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOSTNAME}:5432/{POSTGRES_RAW_DB}"
     std_connection_string = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOSTNAME}:5432/{POSTGRES_STD_DB}"
