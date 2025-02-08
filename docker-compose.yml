@@ -45,6 +45,16 @@ services:
     volumes:
       - ./src:/app/src
     command: --query "data scientist"
+  de-script:
+    build: .
+    container_name: jma-ds-script
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src
+    command: --query "data engineer"
   update-deleted-script:
     build: .
     container_name: jma-db-update
