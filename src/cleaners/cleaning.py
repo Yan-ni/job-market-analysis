@@ -101,6 +101,32 @@ def salary_to_min_max_salary(salary: str) -> tuple[int | None, int | None]:
     raise Exception(f"could not match '{salary}' salary")
 
 
+def min_experience_to_float(min_experience: str) -> float:
+    if not isinstance(min_experience, str):
+        return None
+
+    if len(min_experience) == 0:
+        return None
+
+    match = re.search(
+        "(?P<ammount_experience>\d+) (?P<experience_type>\w+)(?<!s)", min_experience
+    )
+
+    if match is None:
+        raise Exception(f"cannot parse experience '{min_experience}")
+
+    experience_type = match.group("experience_type")
+    ammount_experience = float(match.group("ammount_experience"))
+
+    if experience_type == "year":
+        return ammount_experience
+
+    if experience_type == "month":
+        return ammount_experience / 12
+
+    raise Exception(f"cannot parse experience type '{experience_type}'")
+
+
 def clean_job_offers(raw_db_engine, std_db_engine):
     scrapes_df = pd.read_sql("SELECT * FROM scrapes", raw_db_engine).set_index("id")
     job_offers_df = pd.read_sql("SELECT * FROM job_offers", raw_db_engine)
@@ -117,7 +143,7 @@ def clean_job_offers(raw_db_engine, std_db_engine):
             "started_at": "scraped_at",
             "date": "created_date",
             "deleted_at": "deleted_date",
-            "experience": "min_experience",
+            "experience": "min_year_experience",
         }
     )
 
@@ -142,8 +168,13 @@ def clean_job_offers(raw_db_engine, std_db_engine):
         (job_offers_df["scraped_at"] - job_offers_df["created_date"])
     ).dt.date
 
-    # min_experience
-    job_offers_df["min_experience"] = job_offers_df["min_experience"].str[15:]
+    # min_year_experience
+    job_offers_df["min_year_experience"] = (
+        job_offers_df["min_year_experience"]
+        .str[15:]
+        .apply(min_experience_to_float)
+        .astype("Float64")
+    )
 
     # salary
     job_offers_df["salary"] = job_offers_df["salary"].str[9:]
@@ -164,7 +195,7 @@ def clean_job_offers(raw_db_engine, std_db_engine):
             "location",
             "remote",
             "education",
-            "min_experience",
+            "min_year_experience",
             "min_salary",
             "max_salary",
             "created_date",
