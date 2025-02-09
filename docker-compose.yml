@@ -47,7 +47,7 @@ services:
     command: --query "data scientist"
   de-script:
     build: .
-    container_name: jma-ds-script
+    container_name: jma-de-script
     env_file: .env
     depends_on:
       db:
