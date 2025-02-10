@@ -1,77 +1,83 @@
+x-scraper-db-env: &scraper-db-env
+  POSTGRES_RAW_DB: ${POSTGRES_RAW_DB}
+  POSTGRES_STD_DB: ${POSTGRES_STD_DB}
+  POSTGRES_USER: ${POSTGRES_USER}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+x-scraper-common: &scraper-common
+  platform: linux/amd64
+  build:
+    dockerfile: dockerfile.chrome
+  environment:
+    <<: *scraper-db-env
+    POSTGRES_HOSTNAME: ${POSTGRES_HOSTNAME}
+    SCRAPER_SLEEP_TIME: ${SCRAPER_SLEEP_TIME}
+  depends_on:
+    db:
+      condition: service_healthy
+  volumes:
+    - ./src:/app
+
 services:
   db:
     image: postgres
     container_name: jma-db
     restart: always
-    env_file: .env
+    environment:
+      <<: *scraper-db-env
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
     ports:
       - 5432:5432
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
       timeout: 5s
       retries: 5
+
   pgadmin:
     container_name: jma-pgadmin
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:latest
     restart: always
     environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
-      - PGADMIN_DISABLE_POSTFIX=true
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      PGADMIN_DISABLE_POSTFIX: true
     ports:
       - 3030:80
 
   da-script:
-    build: .
     container_name: jma-da-script
-    env_file: .env
-    depends_on:
-      db:
-        condition: service_healthy
-    volumes:
-      - ./src:/app/src
+    <<: *scraper-common
     command: --query "data analyst"
+
   ds-script:
-    build: .
     container_name: jma-ds-script
-    env_file: .env
-    depends_on:
-      db:
-        condition: service_healthy
-    volumes:
-      - ./src:/app/src
+    <<: *scraper-common
     command: --query "data scientist"
+
   de-script:
-    build: .
     container_name: jma-de-script
-    env_file: .env
-    depends_on:
-      db:
-        condition: service_healthy
-    volumes:
-      - ./src:/app/src
+    <<: *scraper-common
     command: --query "data engineer"
+
   update-deleted-script:
-    build: .
     container_name: jma-db-update
-    env_file: .env
-    depends_on:
-      db:
-        condition: service_healthy
-    volumes:
-      - ./src:/app/src
+    <<: *scraper-common
     command: --update-deleted
+
   data-cleaner:
     container_name: jma-data-cleaner
     build:
-      dockerfile: cleaner.dockerfile
+      dockerfile: dockerfile.base
     volumes:
       - ./src/cleaners:/app
-    env_file: .env
+    command: cleaning.py
+    environment:
+      <<: *scraper-db-env
+      POSTGRES_HOSTNAME: ${POSTGRES_HOSTNAME}
     depends_on:
       db:
         condition: service_healthy

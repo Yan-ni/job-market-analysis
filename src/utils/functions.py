@@ -7,7 +7,7 @@ import os
 def check_env_var():
     load_dotenv()
 
-    POSTGRES_DATABASE = os.environ.get("POSTGRES_DB")
+    POSTGRES_DATABASE = os.environ.get("POSTGRES_RAW_DB")
     POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
     POSTGRES_USER = os.environ.get("POSTGRES_USER")
     POSTGRES_HOSTNAME = os.environ.get("POSTGRES_HOSTNAME")
