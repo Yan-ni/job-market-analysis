@@ -1,0 +1,51 @@
+x-redash-env-common: &redash-env-common
+  PYTHONUNBUFFERED: 0
+  REDASH_LOG_LEVEL: "INFO"
+  REDASH_REDIS_URL: "redis://redash-redis:6379/0"
+  REDASH_DATABASE_URL: "postgresql://${REDASH_POSTGRES_USER}:${REDASH_POSTGRES_PASSWORD}@redash-postgres/${REDASH_POSTGRES_DB}"
+  REDASH_COOKIE_SECRET: ${REDASH_COOKIE_SECRET}
+  REDASH_MAIL_SERVER: ""
+  REDASH_MAIL_DEFAULT_SENDER: ""
+
+services:
+  redash-server:
+    platform: linux/amd64
+    container_name: redash-server
+    image: redash/redash:latest
+    command: server
+    depends_on:
+      - redash-postgres
+      - redash-redis
+    ports:
+      - 5050:5000
+    environment:
+      <<: *redash-env-common
+      REDASH_WEB_WORKERS: 4
+
+  redash-worker:
+    platform: linux/amd64
+    container_name: redash-worker
+    image: redash/redash:latest
+    command: scheduler
+    environment:
+      <<: *redash-env-common
+      WORKERS_COUNT: 2
+      QUEUES: "queries,scheduled_queries,celery"
+
+  redash-redis:
+    container_name: redash-redis
+    image: redis:3.0-alpine
+
+  redash-postgres:
+    platform: linux/amd64
+    container_name: redash-postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: ${REDASH_POSTGRES_DB}
+      POSTGRES_USER: ${REDASH_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${REDASH_POSTGRES_PASSWORD}
+    volumes:
+      - redash-pgdata:/var/lib/postgresql/data
+
+volumes:
+  redash-pgdata:

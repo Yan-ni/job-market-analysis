@@ -11,7 +11,7 @@ def main():
     check_env_var()
 
     if args.update_deleted:
-        update_deleted(args)
+        update_deleted()
     else:
         scrape_jobs(args)
 
