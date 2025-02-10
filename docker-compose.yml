@@ -11,7 +11,6 @@ x-scraper-common: &scraper-common
   environment:
     <<: *scraper-db-env
     POSTGRES_HOSTNAME: ${POSTGRES_HOSTNAME}
-    SCRAPER_SLEEP_TIME: ${SCRAPER_SLEEP_TIME}
   depends_on:
     db:
       condition: service_healthy
