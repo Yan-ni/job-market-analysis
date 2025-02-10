@@ -1,16 +1,31 @@
 from bs4 import BeautifulSoup
 from selenium.webdriver import Chrome
+from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
-import time
+import logging
 import re
+import json
 
-from dotenv import load_dotenv
-import os
 
-load_dotenv()
+def wait_for_all_requests_to_complete(driver: WebDriver) -> bool:
+    logs = driver.get_log("performance")  # Get network logs
+    pending_requests = 0
 
-SCRAPER_SLEEP_TIME = int(os.environ.get("SCRAPER_SLEEP_TIME", 1))
+    for log in logs:
+        log_entry = json.loads(log["message"])["message"]
+
+        if log_entry["method"] == "Network.requestWillBeSent":
+            pending_requests += 1
+        elif log_entry["method"] == "Network.responseReceived":
+            pending_requests -= 1
+
+    if pending_requests <= 0:
+        logging.debug("✅ All requests are complete.")
+        return True
+
+    logging.debug("❌ All requests didn't complete yet")
+    return False
 
 
 class Scraper:
@@ -21,18 +36,23 @@ class Scraper:
         """Fetch the url and return its page source soup."""
         chrome_options = Options()
         chrome_options.add_argument("--headless=new")
+        chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.set_capability(
+            "goog:loggingPrefs", {"performance": "ALL"}
+        )  # capture network logs
         browser = Chrome(
             options=chrome_options
         )  # Path to chromium argument is optional, if not specified will search path.
         browser.get(url)
-        wait = WebDriverWait(browser, 60)  # wait up to 60 seconds to timeout
+        wait = WebDriverWait(browser, timeout=60, poll_frequency=2)
         wait.until(
             lambda driver: driver.execute_script("return document.readyState")
             == "complete"
+            and wait_for_all_requests_to_complete(driver)
         )
-        time.sleep(SCRAPER_SLEEP_TIME)
+
         return BeautifulSoup(browser.page_source, "html.parser")
 
     @staticmethod
