@@ -20,3 +20,7 @@ jobs:
           script: |
             cd /root/job-market-analysis
             git pull origin prod
+            if [ $? -ne 0 ]; then
+              exit 1
+            fi
+            docker compose build
