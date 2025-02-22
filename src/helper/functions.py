@@ -59,10 +59,10 @@ def scrape_jobs(args):
     )
     logging.debug("{:<8} {:<8}".format("Page", "Job offers"))
 
-    while True:
+    while search_page is not None:
         page_job_offers_urls = search_page.get_jobs_offers_urls()
 
-        logging.debug(
+        logging.info(
             "{:<8} {:<8}".format(
                 search_page.get_page_number(), len(page_job_offers_urls)
             )
@@ -70,14 +70,7 @@ def scrape_jobs(args):
 
         total_job_offers_urls = total_job_offers_urls.union(page_job_offers_urls)
 
-        if len(page_job_offers_urls) < 30:
-            break
-
         search_page = search_page.next_page()
-
-    logging.info(
-        f"retrieved {len(total_job_offers_urls)} job offers from {search_page.get_page_number()} pages."
-    )
 
     db_cursor.close()
     db_connection.close()

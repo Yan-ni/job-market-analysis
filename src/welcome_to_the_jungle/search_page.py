@@ -1,8 +1,10 @@
 from scraper import Scraper
 from database import ScrapeDB
+import math
 
 
 class SearchPage:
+    max_pages: int = None
     """A representation of (welcome to the jungle) search page.
 
     Attributes:
@@ -34,11 +36,11 @@ class SearchPage:
     def save_scrape_to_db(self):
         self.__db_cur.execute(
             """UPDATE scrapes SET
-      query = %(query)s,
-      contract_type = %(contract_type)s,
-      location = %(location)s,
-      country_code = %(country_code)s
-      WHERE id=%(scrape_id)s""",
+            query = %(query)s,
+            contract_type = %(contract_type)s,
+            location = %(location)s,
+            country_code = %(country_code)s
+            WHERE id=%(scrape_id)s""",
             {
                 "query": self.get_query(),
                 "contract_type": self.get_contract_type(),
@@ -67,11 +69,29 @@ class SearchPage:
     def get_url(self) -> str:
         return f"https://www.welcometothejungle.com/en/jobs?refinementList[offices.country_code][]={self.get_country_code()}&refinementList[contract_type][]={self.get_contract_type()}&query={self.get_query()}&page={self.get_page_number()}&aroundQuery={self.get_location()}&searchTitle=true"
 
+    def set_max_pages(self, soup) -> None:
+        number_job_offers_tag = soup.select_one(
+            "[data-testid='jobs-search-results-count']"
+        )
+        number_job_offers: int = int(number_job_offers_tag.get_text(""))
+
+        SearchPage.max_pages = math.ceil(number_job_offers / 30)
+
+    @classmethod
+    def get_max_pages(cls) -> int:
+        return cls.max_pages
+
     def get_jobs_offers_urls(self) -> set[str]:
         """Return a set of job urls present in the current search page."""
-        soup = Scraper.get_url_soup(self.get_url())
+        soup = Scraper.get_url_soup(
+            self.get_url(),
+            waitCheck="document.querySelectorAll(\"[data-testid='search-results-list-item-wrapper']\").length > 0",
+        )
         elements = soup.select("li > div > div > a")
         jobs_urls = set()
+
+        if self.page_number == 1:
+            self.set_max_pages(soup)
 
         for element in elements:
             if "href" in element.attrs:
@@ -81,6 +101,9 @@ class SearchPage:
 
     def next_page(self):
         """Return next search page"""
+        if self.page_number + 1 > self.get_max_pages():
+            return None
+
         return SearchPage(
             page_number=(self.page_number + 1),
             db_cursor=self.__db_cur,

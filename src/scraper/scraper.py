@@ -32,7 +32,7 @@ class Scraper:
     """A representation of the scraper that is a combination of selenium and beautiful soup."""
 
     @staticmethod
-    def get_url_soup(url: str) -> BeautifulSoup:
+    def get_url_soup(url: str, waitCheck: str = "true") -> BeautifulSoup:
         """Fetch the url and return its page source soup."""
         chrome_options = Options()
         chrome_options.add_argument("--headless=new")
@@ -51,6 +51,7 @@ class Scraper:
             lambda driver: driver.execute_script("return document.readyState")
             == "complete"
             and wait_for_all_requests_to_complete(driver)
+            and driver.execute_script(f"return {waitCheck}")
         )
 
         return BeautifulSoup(browser.page_source, "html.parser")
