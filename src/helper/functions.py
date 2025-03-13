@@ -95,7 +95,10 @@ def update_deleted():
         logging.warning("database empty.")
         exit(0)
 
-    for job_offer_url in job_offer_urls:
+    logging.info(f"checking to update {len(job_offer_urls)} job offers.")
+
+    for index, job_offer_url in enumerate(job_offer_urls):
+        logging.info(f"processing job offer {index+1}/{len(job_offer_urls)}")
         jo = JobOffer(job_offer_url, db_cur)
         jo_company = jo.get_company()
 
@@ -106,7 +109,7 @@ def update_deleted():
         logging.info("nothing to update.")
         exit(0)
 
-    logging.info(f"updating {len(deleted_job_offers_ids)} rows.")
+    logging.info(f"updating {len(deleted_job_offers_ids)} rows in the database.")
 
     db_cur.execute(
         """UPDATE job_offers
