@@ -31,7 +31,7 @@ SQLAlchemy==2.0.39
 tomli==2.2.1
 trio==0.25.1
 trio-websocket==0.12.2
-typing_extensions==4.13.1
+typing_extensions==4.13.2
 tzdata==2025.1
 urllib3==2.3.0
 wsproto==1.2.0
