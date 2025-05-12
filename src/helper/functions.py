@@ -89,8 +89,6 @@ def update_deleted():
 
     job_offer_urls = [url[0] for url in db_cur.fetchall()]
 
-    deleted_job_offers_ids = list()
-
     if len(job_offer_urls) == 0:
         logging.warning("database empty.")
         exit(0)
@@ -103,28 +101,20 @@ def update_deleted():
         jo_company = jo.get_company()
 
         if jo.is_deleted():
-            deleted_job_offers_ids.append((jo.get_id(), jo_company.get_id()))
-
-    if len(deleted_job_offers_ids) == 0:
-        logging.info("nothing to update.")
-        exit(0)
-
-    logging.info(f"updating {len(deleted_job_offers_ids)} rows in the database.")
-
-    db_cur.execute(
-        """UPDATE job_offers
-        SET deleted_at = %(deleted_at)s
-        WHERE (id, company_id) IN %(deleted_job_offers_ids)s
-        """,
-        {
-            "deleted_at": str(datetime.now().date()),
-            "deleted_job_offers_ids": tuple(deleted_job_offers_ids),
-        },
-    )
-
-    db_conn.commit()
-
-    logging.info("database updated successfully.")
+            logging.info(
+                f"updating {(jo.get_id(), jo_company.get_id())} row in the database."
+            )
+            db_cur.execute(
+                """UPDATE job_offers
+                SET deleted_at = %(deleted_at)s
+                WHERE (id, company_id) = %(deleted_job_offers_ids)s
+                """,
+                {
+                    "deleted_at": str(datetime.now().date()),
+                    "deleted_job_offers_ids": (jo.get_id(), jo_company.get_id()),
+                },
+            )
+            db_conn.commit()
 
     db_cur.close()
     db_conn.close()
