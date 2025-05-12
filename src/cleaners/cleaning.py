@@ -221,7 +221,7 @@ def str_percent_to_float(percent_str: str) -> float | None:
         return None
 
     if "%" not in percent_str:
-        raise Exception(f"'%' sign is not included in the percentage string")
+        raise Exception("'%' sign is not included in the percentage string")
 
     return int(percent_str[:-1]) / 100
 

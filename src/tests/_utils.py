@@ -20,9 +20,9 @@ def load_test_data(test_data_dir_path):
     input_filenames = get_filenames(input_dir)
     expected_filenames = get_filenames(expected_dir)
 
-    assert (
-        input_filenames == expected_filenames
-    ), f"Mismatch between input and expected files: {input_filenames} vs {expected_filenames}"
+    assert input_filenames == expected_filenames, (
+        f"Mismatch between input and expected files: {input_filenames} vs {expected_filenames}"
+    )
 
     test_data = []
     for filename in input_filenames:
