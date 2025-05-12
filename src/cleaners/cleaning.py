@@ -67,7 +67,11 @@ def salary_to_min_max_salary(salary: str) -> tuple[int | None, int | None]:
     if len(salary) == 0:
         return (None, None)
 
-    if salary == "Not specified" or salary == "Not specified0":
+    if (
+        salary == "Not specified"
+        or salary == "Not specified0"
+        or salary == "Not specified 0"
+    ):
         return (None, None)
 
     # €60K to 100K
