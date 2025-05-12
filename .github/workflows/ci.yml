@@ -25,13 +25,12 @@ jobs:
         run: pytest
 
   linter:
-    name: Code Linter
     runs-on: ubuntu-latest
+    name: check the lint
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Run linter check
-        uses: rickstaa/action-black@v1
+      - uses: actions/checkout@v4
+      - name: Install Python
+        uses: actions/setup-python@v5
         with:
-          black_args: ". --check"
+          python-version: '3.11'
+      - uses: pre-commit/action@v3.0.1
