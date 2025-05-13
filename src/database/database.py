@@ -1,10 +1,11 @@
 import psycopg2
 import psycopg2.extras
 import psycopg2.pool
-import logging
 import time
-from dotenv import load_dotenv
-import os
+
+from utils.config import get_settings
+
+global_settings = get_settings()
 
 
 class ScrapeDB:
@@ -15,12 +16,10 @@ class ScrapeDB:
 
     @classmethod
     def init(cls):
-        load_dotenv()
-
-        cls.hostname = os.environ.get("POSTGRES_HOSTNAME")
-        cls.database = os.environ.get("POSTGRES_RAW_DB")
-        cls.user = os.environ.get("POSTGRES_USER")
-        cls.password = os.environ.get("POSTGRES_PASSWORD")
+        cls.hostname = global_settings.postgres_hostname
+        cls.database = global_settings.postgres_database
+        cls.user = global_settings.postgres_user
+        cls.password = global_settings.postgres_password
 
         con = cls.get_con()
         cur = con.cursor(cursor_factory=psycopg2.extras.DictCursor)

@@ -6,16 +6,13 @@ x-scraper-db-env: &scraper-db-env
 
 x-scraper-common: &scraper-common
   platform: linux/amd64
-  build:
-    dockerfile: dockerfile.chrome
+  build: .
   environment:
     <<: *scraper-db-env
     POSTGRES_HOSTNAME: ${POSTGRES_HOSTNAME}
   depends_on:
     db:
       condition: service_healthy
-  volumes:
-    - ./src:/app
 
 services:
   db:
@@ -50,30 +47,27 @@ services:
   da-script:
     container_name: jma-da-script
     <<: *scraper-common
-    command: --query "data analyst"
+    command: main.py --query "data analyst"
 
   ds-script:
     container_name: jma-ds-script
     <<: *scraper-common
-    command: --query "data scientist"
+    command: main.py --query "data scientist"
 
   de-script:
     container_name: jma-de-script
     <<: *scraper-common
-    command: --query "data engineer"
+    command: main.py --query "data engineer"
 
   update-deleted-script:
     container_name: jma-db-update
     <<: *scraper-common
-    command: --update-deleted
+    command: main.py --update-deleted
 
   data-cleaner:
     container_name: jma-data-cleaner
-    build:
-      dockerfile: dockerfile.base
-    volumes:
-      - ./src/cleaners:/app
-    command: cleaning.py
+    build: .
+    command: cleaners/cleaning.py
     environment:
       <<: *scraper-db-env
       POSTGRES_HOSTNAME: ${POSTGRES_HOSTNAME}
