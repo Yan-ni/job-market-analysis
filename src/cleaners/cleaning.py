@@ -1,10 +1,12 @@
 from datetime import datetime, date, timedelta
 from sqlalchemy import create_engine
-from dotenv import load_dotenv
 import pandas as pd
-import urllib
-import os
 import re
+
+from utils.config import get_settings
+
+
+global_settings = get_settings()
 
 
 def str_date_to_timedelta(date_str: str) -> timedelta:
@@ -278,15 +280,8 @@ def save_df_to_std_db(table_name: str, df: pd.DataFrame, std_db_engine):
 
 
 if __name__ == "__main__":
-    load_dotenv()
-    POSTGRES_HOSTNAME = os.getenv("POSTGRES_HOSTNAME")
-    POSTGRES_RAW_DB = os.getenv("POSTGRES_RAW_DB")
-    POSTGRES_STD_DB = os.getenv("POSTGRES_STD_DB")
-    POSTGRES_USER = urllib.parse.quote(os.getenv("POSTGRES_USER"))
-    POSTGRES_PASSWORD = urllib.parse.quote(os.getenv("POSTGRES_PASSWORD"))
-
-    raw_connection_string = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOSTNAME}:5432/{POSTGRES_RAW_DB}"
-    std_connection_string = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOSTNAME}:5432/{POSTGRES_STD_DB}"
+    raw_connection_string = f"postgresql://{global_settings.postgres_user}:{global_settings.postgres_password}@{global_settings.postgres_hostname}:5432/{global_settings.postgres_raw_db}"
+    std_connection_string = f"postgresql://{global_settings.postgres_user}:{global_settings.postgres_password}@{global_settings.postgres_hostname}:5432/{global_settings.postgres_std_db}"
     raw_db_engine = create_engine(raw_connection_string)
     std_db_engine = create_engine(std_connection_string)
 
