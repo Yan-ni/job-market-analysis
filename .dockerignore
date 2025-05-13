@@ -1,4 +1,1 @@
-.venv/
-*.md
-*.sh
-.gitignore
+__pycache__/
