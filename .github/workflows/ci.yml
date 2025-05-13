@@ -13,16 +13,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
 
-      - name: Install requirements
-        run: pip install -r requirements.txt -q
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
 
-      - name: Run unit tests
-        run: pytest
+      - name: Run tests
+        run: uv run pytest
 
   linter:
     runs-on: ubuntu-latest

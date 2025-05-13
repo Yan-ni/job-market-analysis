@@ -187,7 +187,6 @@ dependencies = [
     { name = "pandas" },
     { name = "psycopg2-binary" },
     { name = "pydantic-settings" },
-    { name = "pytest" },
     { name = "selenium" },
     { name = "sqlalchemy" },
 ]
@@ -195,6 +194,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "pre-commit" },
+    { name = "pytest" },
 ]
 
 [package.metadata]
@@ -203,13 +203,15 @@ requires-dist = [
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "psycopg2-binary", specifier = ">=2.9.10" },
     { name = "pydantic-settings", specifier = ">=2.9.1" },
-    { name = "pytest", specifier = ">=8.3.5" },
     { name = "selenium", specifier = ">=4.32.0" },
     { name = "sqlalchemy", specifier = ">=2.0.40" },
 ]
 
 [package.metadata.requires-dev]
-dev = [{ name = "pre-commit", specifier = ">=4.2.0" }]
+dev = [
+    { name = "pre-commit", specifier = ">=4.2.0" },
+    { name = "pytest", specifier = ">=8.3.5" },
+]
 
 [[package]]
 name = "nodeenv"
