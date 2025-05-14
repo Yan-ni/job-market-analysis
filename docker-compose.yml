@@ -21,7 +21,7 @@ services:
     restart: always
     environment:
       <<: *scraper-db-env
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
