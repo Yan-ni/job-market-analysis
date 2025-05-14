@@ -3,7 +3,6 @@ x-scraper-db-env: &scraper-db-env
   POSTGRES_STD_DB: ${POSTGRES_STD_DB}
   POSTGRES_USER: ${POSTGRES_USER}
   POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-  POSTGRES_DATABASE: ${POSTGRES_DATABASE}
 
 x-scraper-common: &scraper-common
   platform: linux/amd64
