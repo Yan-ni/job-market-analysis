@@ -17,7 +17,7 @@ class ScrapeDB:
     @classmethod
     def init(cls):
         cls.hostname = global_settings.postgres_hostname
-        cls.database = global_settings.postgres_database
+        cls.database = global_settings.postgres_raw_db
         cls.user = global_settings.postgres_user
         cls.password = global_settings.postgres_password
 
