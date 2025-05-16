@@ -1,27 +1,23 @@
 # French Job Market Analysis 🌿
 
-The goal of this project is to apply data analysis concepts to analyze the job market in France.
+The goal of this project is to apply data engineering and analysis concepts to analyze the job market in France.
 
 ## Technologies Utilized
 
 - Selenium & Beautiful Soup: For dynamic web page loading & scraping.
-- Docker & Postgresql: For data storage.
+- Docker & Postgresql: For deployment and data storage.
+- Cron jobs: for ELT orchestration.
 
 ## 🚀 Getting started
 
 To install the required packages to run the project's scripts you should:
 
-Create a virtual environment (venv):
+You need to [install uv](https://docs.astral.sh/uv/getting-started/installation/)
+
+Run the scraping ELT for data analyst:
 
 ```shell
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-Installing the project dependencies:
-
-```shell
-pip3 install -r requirements.txt
+uv run src/main.py --query "data analyst"
 ```
 
 ## ⚙️ Data collection
@@ -87,3 +83,7 @@ Job offer titles: Data Analyst, Data Science
 | parity_percent_men   | TEXT             |
 | average_age          | TEXT             |
 | url                  | TEXT             |
+
+### std data
+
+The std (standardized) data is the raw data cleaned and prepared for analysis.
